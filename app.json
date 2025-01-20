@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "sowgatly.app",
+    "slug": "sowgatly-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/img/logo/apple-icon-180x180.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/img/logo/favicon-96x96.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.sowgatly.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/img/logo/apple-icon-180x180.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/img/logo/favicon-96x96.png"
+    }
+  }
+}
