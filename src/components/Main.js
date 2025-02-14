@@ -8,7 +8,6 @@ import ChangeLanguage from '../screens/ChangeLanguage';
 const Main = () => {
   return (
     <View style={styles.container}>
-      
       <ScrollView>
         <Categories />
 
@@ -19,7 +18,6 @@ const Main = () => {
         <ChangeLanguage />
 
       </ScrollView>
-      
     </View>
   );
 }

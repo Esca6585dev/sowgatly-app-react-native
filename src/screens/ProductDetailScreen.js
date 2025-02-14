@@ -56,7 +56,7 @@ const ProductDetailScreen = ({ route }) => {
       )}
       
       <View style={styles.productDetails}>
-        <Text style={styles.productName}>{data.name}</Text>
+        <Text style={styles.productName}>{data.name[i18n.translator.language]}</Text>
         
         <View style={styles.starContainer}>
           <Image style={styles.iconStar} source={starIcon} />
@@ -90,7 +90,7 @@ const ProductDetailScreen = ({ route }) => {
 
         <View style={styles.section}>
           <Text style={styles.sectionName}>{t('Description')}</Text>
-          <Text style={styles.sectionDescription}>{data.description}</Text>
+          <Text style={styles.sectionDescription}>{data.description[i18n.translator.language]}</Text>
         </View>
 
         <View style={styles.section}>
@@ -100,10 +100,9 @@ const ProductDetailScreen = ({ route }) => {
             <Image style={styles.iconAvatar} source={`http://localhost:8000/${data.shop.image}`} />
 
             <View style={styles.textAvatar}>
-              <Text style={styles.textAvatarName}>Ялкап</Text>
-              {console.log(data)}
-              {console.log(data.shop)}
-              {console.log(data.shop.name)}
+              <Text style={styles.textAvatarName}>{data.shop.name}</Text>
+
+              {console.log(data.attributes)}
 
               <Text style={styles.textAvatarTime}>13:56</Text>
             </View>

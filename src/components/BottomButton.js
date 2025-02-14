@@ -11,7 +11,7 @@ const BottomButton = ({data}) => {
     // Function is called everytime increment button is clicked
     const incrementNumber = () => {
         // Counter state is incremented
-        if(counter < 25) {
+        if(counter < data.stock) {
             setCounter(counter + 1);
         }
     };

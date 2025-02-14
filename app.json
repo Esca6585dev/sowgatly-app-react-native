@@ -7,9 +7,9 @@
     "icon": "./assets/img/logo/apple-icon-180x180.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/img/logo/favicon-96x96.png",
+      "image": "./assets/img/logo/logo-white.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -21,8 +21,8 @@
       "package": "com.sowgatly.app",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/img/logo/apple-icon-180x180.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/img/logo/logo-white.png",
+        "backgroundColor": "#000"
       }
     },
     "web": {

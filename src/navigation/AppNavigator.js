@@ -3,19 +3,22 @@ import { StyleSheet, Text } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
+
+// Import your components
 import Header from '../components/Header'
 import Main from '../components/Main'
 import Favorite from '../components/Favorite'
 import Chat from '../components/Chat'
 import Cart from '../components/Cart'
-import Account from '../components/Account'
 
 // Import your screens
-import NotificationsScreen from '../screens/NotificationsScreen';
-import ProductDetailScreen from '../screens/ProductDetailScreen';
+import NotificationsScreen from '../screens/NotificationsScreen'
+import ProductDetailScreen from '../screens/ProductDetailScreen'
+import RegisterScreen from '../screens/RegisterScreen'
+import LoginScreen from '../screens/LoginScreen'
 
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator()
+const Tab = createBottomTabNavigator()
 
 // Tab Navigator Component
 function TabNavigator() {
@@ -23,24 +26,24 @@ function TabNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let iconName
 
           if (route.name === 'Main') {
-            iconName = focused ? 'home' : 'home-outline';
+            iconName = focused ? 'home' : 'home-outline'
           } else if (route.name === 'Favorite') {
-            iconName = focused ? 'heart' : 'heart-outline';
+            iconName = focused ? 'heart' : 'heart-outline'
           } else if (route.name === 'Account') {
-            iconName = focused ? 'person' : 'person-outline';
+            iconName = focused ? 'person' : 'person-outline'
           } else if (route.name === 'Chat') {
-            iconName = focused ? 'chatbox' : 'chatbox-outline';
+            iconName = focused ? 'chatbox' : 'chatbox-outline'
           } else if (route.name === 'Cart') {
-            iconName = focused ? 'cart' : 'cart-outline';
+            iconName = focused ? 'cart' : 'cart-outline'
           }
 
-          return <Ionicons style={styles.tabIcon} name={iconName} size={size} color={color} />;
+          return <Ionicons style={styles.tabIcon} name={iconName} size={size} color={color} />
         },
         tabBarLabel: () => {
-          return <Text style={styles.tabIconTitle}>{route.name}</Text>;
+          return <Text style={styles.tabIconTitle}>{route.name}</Text>
         },
         tabBarActiveTintColor: 'black',
         tabBarInactiveTintColor: 'black',
@@ -51,9 +54,10 @@ function TabNavigator() {
       <Tab.Screen name="Favorite" component={Favorite} options={{header: () => <Header />}}/>
       <Tab.Screen name="Chat" component={Chat} options={{header: () => <Header />}}/>
       <Tab.Screen name="Cart" component={Cart} options={{header: () => <Header />}}/>
-      <Tab.Screen name="Account" component={Account} options={{header: () => <Header />}}/>
+      <Tab.Screen name="Account" component={LoginScreen} options={{header: () => '' }}/>
+
     </Tab.Navigator>
-  );
+  )
 }
 
 // Home Stack Navigator Component
@@ -81,8 +85,12 @@ function HomeStackNavigator() {
         }}
       />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
+
+      <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
+
     </Stack.Navigator>
-  );
+  )
 }
 
 // Main App Navigator
@@ -97,7 +105,7 @@ export default function AppNavigator() {
         />
       </Stack.Navigator>
     </NavigationContainer>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -108,4 +116,4 @@ const styles = StyleSheet.create({
     color: '#000',
     paddingVertical: 2
   }
-});
+})
