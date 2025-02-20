@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Image, FlatList, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Platform } from 'react-native';
 
 const Favorite = ({ category_id, navigation }) => {
     const [data, setData] = useState([]);
@@ -122,14 +123,17 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: '#ccc',
         backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+            },
+            android: {
+                elevation: 5,
+            },
+        }),
     },
     imageContainer: {
         position: 'relative',
@@ -155,14 +159,17 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.22,
-        shadowRadius: 2.22,
-        elevation: 3,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.22,
+                shadowRadius: 2.22,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
     },
     productName: {
         fontSize: 12,

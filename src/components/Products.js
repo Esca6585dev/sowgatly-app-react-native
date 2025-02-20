@@ -3,6 +3,7 @@ import { Image, FlatList, StyleSheet, View, Text, TouchableOpacity } from 'react
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { Platform } from 'react-native';
 
 const getDiscount = (price, discount) => {
     return Math.floor(price-(price*discount)/100);
@@ -30,6 +31,7 @@ const Products = ({ category_id }) => {
         
         // Check local storage first
         const cached = localStorage.getItem('categories');
+        const token = localStorage.getItem('access_token');
 
         if (cached) {
             setData(JSON.parse(cached));
@@ -42,7 +44,7 @@ const Products = ({ category_id }) => {
             const response = await fetch(`http://localhost:8000/api/product/category/${category_id}`, {
                 method: 'GET',
                 headers: {
-                    Authorization: 'Bearer 1|MADVetcOYwHT7yYmWWQB9PLK6T1lQyvoBYI8Pqc559492981',
+                    Authorization: 'Bearer ' + token,
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
@@ -130,14 +132,17 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: '#ccc',
         backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84, // Or 3, adjust as needed
+            },
+            android: {
+                elevation: 5, // Only elevation for Android
+            },
+        }),
     },
     imageContainer: {
         position: 'relative',
@@ -163,14 +168,17 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.22,
-        shadowRadius: 2.22,
-        elevation: 3,
+        ...Platform.select({  // Use Platform.select here
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.22,
+                shadowRadius: 2.22,
+            },
+            android: {
+                elevation: 3, // Only elevation for Android
+            },
+        }),
     },
     productName: {
         fontSize: 12,

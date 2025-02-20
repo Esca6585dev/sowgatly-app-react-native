@@ -6,13 +6,14 @@ const Categories = () => {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const { t, i18n } = useTranslation();
+    const token = localStorage.getItem('access_token');
 
     const getCategories = async () => {
         try {
             const response = await fetch('http://localhost:8000/api/categories', {
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer 1|MADVetcOYwHT7yYmWWQB9PLK6T1lQyvoBYI8Pqc559492981',
+                    'Authorization': 'Bearer ' + token,
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 }

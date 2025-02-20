@@ -1,3 +1,4 @@
+import { React, useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native'
 import { StyleSheet, Text } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -10,18 +11,19 @@ import Main from '../components/Main'
 import Favorite from '../components/Favorite'
 import Chat from '../components/Chat'
 import Cart from '../components/Cart'
+import Account from '../components/Account'
 
 // Import your screens
 import NotificationsScreen from '../screens/NotificationsScreen'
 import ProductDetailScreen from '../screens/ProductDetailScreen'
-import RegisterScreen from '../screens/RegisterScreen'
 import LoginScreen from '../screens/LoginScreen'
+import OTPScreen from '../screens/OTPScreen'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
 // Tab Navigator Component
-function TabNavigator() {
+const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -54,47 +56,63 @@ function TabNavigator() {
       <Tab.Screen name="Favorite" component={Favorite} options={{header: () => <Header />}}/>
       <Tab.Screen name="Chat" component={Chat} options={{header: () => <Header />}}/>
       <Tab.Screen name="Cart" component={Cart} options={{header: () => <Header />}}/>
-      <Tab.Screen name="Account" component={LoginScreen} options={{header: () => '' }}/>
+      <Tab.Screen name="Account" component={Account} options={{header: () => '' }}/>
 
     </Tab.Navigator>
   )
 }
 
-// Home Stack Navigator Component
-function HomeStackNavigator() {
+const HomeStackNavigator = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // State for auth
+
+  useEffect(() => {
+      const checkAuth = async () => {
+          try {
+              const token = localStorage.getItem('access_token');
+              setIsAuthenticated(!!token);
+          } catch (error) {
+              console.error("Error checking auth:", error);
+              setIsAuthenticated(false);
+          }
+      };
+      checkAuth();
+  }, []);
+
+  if (isAuthenticated === null) {
+      return <Text>Loading...</Text>; // Loading state
+  }
+
   return (
-    <Stack.Navigator 
-    screenOptions={{
-      headerStyle: {
-        backgroundColor: '#fff',
-      },
-      headerTintColor: '#000',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
-    }}>
-      <Stack.Screen 
-        name="HomeScreen" 
-        component={TabNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} 
-        options={{ 
-          title: 'Product Detail',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen name="Notifications" component={NotificationsScreen} />
-
-      <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-
-    </Stack.Navigator>
-  )
-}
+      <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#fff',
+        },
+        headerTintColor: '#000',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}>
+          {isAuthenticated ? ( // Conditional screens
+              <>
+                  <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ headerShown: false }} />
+                  <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false, title: 'Product Detail' }} />
+                  <Stack.Screen name="Notifications" component={NotificationsScreen} />
+                  {/* ... other authenticated screens */}
+              </>
+          ) : (
+              <>
+                  <Stack.Screen name="LoginScreen" component={LoginScreen} />
+                  <Stack.Screen name="OTPScreen" component={OTPScreen} />
+                  {/* ... other unauthenticated screens */}
+              </>
+          )}
+      </Stack.Navigator>
+  );
+};
 
 // Main App Navigator
-export default function AppNavigator() {
+const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -107,6 +125,8 @@ export default function AppNavigator() {
     </NavigationContainer>
   )
 }
+
+export default AppNavigator
 
 const styles = StyleSheet.create({
   tabIcon: {

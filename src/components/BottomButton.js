@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { Platform } from 'react-native';
 
 const getDiscount = (price, discount) => {
     return Math.floor(price-(price*discount)/100);
@@ -82,8 +83,17 @@ const styles = StyleSheet.create({
         height: '92px',
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        shadowColor: '#999',
-        shadowRadius: 10,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#999',
+                shadowOffset: { width: 0, height: 0 }, // You might need to adjust offset
+                shadowOpacity: 1, // You might need to adjust opacity
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 5, // Adjust elevation as needed
+            },
+        }),
     },
     bottomWrapper: {
         flexDirection: 'row',
@@ -100,9 +110,17 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 10,
         borderColor: '#ccc',
-        shadowColor: '#ccc',
-        shadowRadius: 3,
-        elevation: 3,
+        ...Platform.select({
+            ios: {
+                shadowColor: '#ccc',
+                shadowOffset: { width: 0, height: 0 }, // You might need to adjust offset
+                shadowOpacity: 1, // You might need to adjust opacity
+                shadowRadius: 3,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
     },
     bottomRight: {
         backgroundColor: '#000',
