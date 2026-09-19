@@ -51,7 +51,7 @@ const ProductGetByCategoryId = () => {
 
     const renderItem = ({ item }) => (
         <View style={styles.categoryContainer}>
-            <Text style={styles.headerText}>{item.name[i18n.translator.language]}</Text>
+            <Text style={styles.headerText}>{item.name?.[i18n.language] || item.name?.tm}</Text>
             <Products category_id={item.id}/>
         </View>
     );

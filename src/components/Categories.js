@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { apiRequest } from '../config/api';
-import { colors, radius, spacing } from '../theme';
+import { colors, radius, spacing, typography } from '../theme';
+
+const SKELETON_COUNT = [1, 2, 3, 4, 5, 6];
 
 const Categories = () => {
     const [isLoading, setLoading] = useState(true);
@@ -28,191 +30,84 @@ const Categories = () => {
         getCategories();
     }, []);
 
-
-    // Add a check for data before chunking
-    const chunkData = (arr) => {
-        if (!arr || !Array.isArray(arr)) return []; // Return empty array if data is not valid
-        const chunks = [];
-        for (let i = 0; i < arr.length; i += 2) {
-            chunks.push(arr.slice(i, i + 2));
-        }
-        return chunks;
-    };
-
-    // Add a loading state check
     if (isLoading) {
-        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
         return (
-            <View>
-                <ScrollView style={styles.scrollView} horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <View style={styles.containerTwoLine}>
-                        {numbers.map((chunk, chunkIndex) => (
-                            <View key={chunkIndex} style={styles.patternContainer}>
-                                {/* Top Row - 1 item */}
-                                <View style={styles.container}>
-                                    <TouchableOpacity style={styles.block}>
-                                        <Text style={styles.blockTextSuspend} />
-
-                                        <View style={styles.categoryImageSuspend} />
-                                    </TouchableOpacity>
-                                </View>
-
-                                {/* Bottom Row - 2 items */}
-                                <View style={styles.container}>
-                                    <TouchableOpacity style={styles.block}>
-                                        <Text style={styles.blockTextSuspend} />
-
-                                        <View style={styles.categoryImageSuspend} />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        ))}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
+                {SKELETON_COUNT.map((key) => (
+                    <View key={key} style={styles.item}>
+                        <View style={styles.iconCircleSuspend} />
+                        <View style={styles.labelSuspend} />
                     </View>
-                </ScrollView>
-            </View>
+                ))}
+            </ScrollView>
         );
     }
 
-    const dataChunks = chunkData(data);
-
     return (
-        <View>
-            <ScrollView style={styles.scrollView} horizontal={true} showsHorizontalScrollIndicator={false}>
-                <View style={styles.containerTwoLine}>
-                    {dataChunks.map((chunk, chunkIndex) => (
-                        <View key={chunkIndex} style={styles.patternContainer}>
-                            {/* Top Row - 1 item */}
-                            <View style={styles.container}>
-                                {chunk[0] && (
-                                    <TouchableOpacity style={styles.blockTop}
-                                        onPress={() => navigation.navigate('Notifications')}
-                                    >
-                                        <Text style={styles.blockText}>
-                                            {chunk[0].name[i18n.translator.language]}
-                                        </Text>
-
-                                        <Image
-                                            style={styles.categoryImage}
-                                            source={{ uri: chunk[0].image }}
-                                        />
-                                    </TouchableOpacity>
-                                )}
-                                {chunk[2] && (
-                                    <TouchableOpacity style={styles.block}
-                                        onPress={() => navigation.navigate('Notifications')}
-                                    >
-                                        <Text style={styles.blockText}>
-                                            {chunk[2].name[i18n.translator.language]}
-                                        </Text>
-
-                                        <Image
-                                            style={styles.categoryImage}
-                                            source={{ uri: chunk[0].image }}
-                                        />
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-
-                            {/* Bottom Row - 2 items */}
-                            <View style={styles.container}>
-                                {chunk[1] && (
-                                    <TouchableOpacity style={styles.block}
-                                        onPress={() => navigation.navigate('Notifications')}
-                                    >
-                                        <Text style={styles.blockText}>
-                                            {chunk[1].name[i18n.translator.language]}
-                                        </Text>
-
-                                        <Image
-                                            style={styles.categoryImage}
-                                            source={{ uri: chunk[1].image }}
-                                        />
-                                    </TouchableOpacity>
-                                )}
-                                {chunk[2] && (
-                                    <TouchableOpacity style={styles.block}
-                                        onPress={() => navigation.navigate('Notifications')}
-                                    >
-                                        <Text style={styles.blockText}>
-                                            {chunk[2].name[i18n.translator.language]}
-                                        </Text>
-
-                                        <Image
-                                            style={styles.categoryImage}
-                                            source={{ uri: chunk[1].image }}
-                                        />
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-                        </View>
-                    ))}
-                </View>
-            </ScrollView>
-        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
+            {data.map((category) => (
+                <TouchableOpacity
+                    key={category.id}
+                    style={styles.item}
+                    onPress={() => navigation.navigate('Collection', { categoryId: category.id, title: category.name?.[i18n.language] })}
+                >
+                    <View style={styles.iconCircle}>
+                        <Image
+                            style={styles.icon}
+                            source={{ uri: category.image }}
+                            resizeMode="cover"
+                        />
+                    </View>
+                    <Text style={styles.label} numberOfLines={1}>
+                        {category.name?.[i18n.language] || category.name?.tm}
+                    </Text>
+                </TouchableOpacity>
+            ))}
+        </ScrollView>
     );
 }
 
+const ITEM_WIDTH = 72;
+
 const styles = StyleSheet.create({
     scrollView: {
-        marginVertical: spacing.xs
+        marginVertical: spacing.sm,
     },
-    containerTwoLine: {
-        flexDirection: 'row',
-        margin: spacing.md,
+    item: {
+        width: ITEM_WIDTH,
+        alignItems: 'center',
+        marginHorizontal: spacing.xs,
     },
-    patternContainer: {
-        flexDirection: 'column',
-        marginRight: 2,
-    },
-    container: {
-        flexDirection: 'row',
-        gap: 5,
-        marginBottom: 5,
-    },
-    block: {
+    iconCircle: {
+        width: 56,
+        height: 56,
+        borderRadius: radius.full,
         backgroundColor: colors.surface,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        minWidth: 120,
-        height: 47,
-        borderRadius: radius.sm,
-        marginHorizontal: 2,
-        padding: 5,
+        overflow: 'hidden',
+        marginBottom: spacing.xs,
     },
-    blockTop: {
-        backgroundColor: colors.surface,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        minWidth: 120,
-        height: 47,
-        borderRadius: radius.sm,
-        padding: 5
+    icon: {
+        width: '100%',
+        height: '100%',
     },
-    blockText: {
-        fontSize: 10,
-        fontWeight: '500',
-        maxWidth: 85,
+    label: {
+        fontSize: typography.size.xs,
         color: colors.text,
+        textAlign: 'center',
     },
-    categoryImage: {
-        width: 40,
-        height: 40,
-        marginLeft: 10
-    },
-    blockTextSuspend: {
+    iconCircleSuspend: {
+        width: 56,
+        height: 56,
+        borderRadius: radius.full,
         backgroundColor: colors.skeleton,
-        width: 75,
-        height: 15,
+        marginBottom: spacing.xs,
+    },
+    labelSuspend: {
+        width: 48,
+        height: 10,
         borderRadius: radius.sm,
-    },
-    categoryImageSuspend: {
-        width: 40,
-        height: 40,
-        marginLeft: 10,
         backgroundColor: colors.skeleton,
-        borderRadius: 20,
-    }
+    },
 });
 
 export default Categories;

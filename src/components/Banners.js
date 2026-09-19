@@ -3,6 +3,7 @@ import { ImageBackground, ScrollView, StyleSheet, View, Text, TouchableOpacity }
 import bgImageRose from '../../assets/banner-1.png';
 import bgImageHNY from '../../assets/banner-2.png';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import { apiRequest } from '../config/api';
 import { colors, radius } from '../theme';
 
@@ -10,6 +11,7 @@ const Banners = () => {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const { i18n } = useTranslation();
+    const navigation = useNavigation();
 
     const getCategories = async () => {
         setLoading(true);
@@ -65,10 +67,15 @@ const Banners = () => {
                 <View style={styles.containerTwoLine}>
                     {Array.isArray(data) && data.map((item, index) => (
                         <View key={index} style={styles.patternContainer}>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('Collection', {
+                                    categoryId: item.id,
+                                    title: item.name?.[i18n.language] || item.name?.tm,
+                                })}
+                            >
                                 <ImageBackground style={styles.bannerBlock} source={(index%2 == 0) ? bgImageHNY : bgImageRose}>
                                     <Text style={styles.bannerBlockText}>
-                                        {item.name[i18n.translator.language]}
+                                        {item.name?.[i18n.language] || item.name?.tm}
                                     </Text>
                                 </ImageBackground>
                             </TouchableOpacity>

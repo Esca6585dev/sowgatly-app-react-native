@@ -57,7 +57,7 @@ const ProductDetailScreen = ({ route }) => {
       )}
       
       <View style={styles.productDetails}>
-        <Text style={styles.productName}>{data.name[i18n.translator.language]}</Text>
+        <Text style={styles.productName}>{data.name?.[i18n.language] || data.name?.tm}</Text>
         
         <View style={styles.starContainer}>
           <Image style={styles.iconStar} source={starIcon} />
@@ -91,7 +91,7 @@ const ProductDetailScreen = ({ route }) => {
 
         <View style={styles.section}>
           <Text style={styles.sectionName}>{t('Description')}</Text>
-          <Text style={styles.sectionDescription}>{data.description[i18n.translator.language]}</Text>
+          <Text style={styles.sectionDescription}>{data.description?.[i18n.language] || data.description?.tm}</Text>
         </View>
 
         <View style={styles.section}>

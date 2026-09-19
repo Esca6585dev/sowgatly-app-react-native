@@ -18,6 +18,7 @@ import Account from '../components/Account'
 // Import your screens
 import NotificationsScreen from '../screens/NotificationsScreen'
 import ProductDetailScreen from '../screens/ProductDetailScreen'
+import CollectionScreen from '../screens/CollectionScreen'
 import WelcomeScreen from '../screens/WelcomeScreen'
 import LoginScreen from '../screens/LoginScreen'
 import OTPScreen from '../screens/OTPScreen'
@@ -82,6 +83,7 @@ const MainStack = () => (
     }}>
     <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ headerShown: false }} />
     <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false, title: 'Önüm' }} />
+    <Stack.Screen name="Collection" component={CollectionScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Bildirişler' }} />
   </Stack.Navigator>
 )
