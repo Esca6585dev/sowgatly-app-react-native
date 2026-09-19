@@ -3,6 +3,8 @@ import { FlatList, StyleSheet, Platform, View, Text, ScrollView, TouchableOpacit
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Products from './Products';
 import { useTranslation } from 'react-i18next';
+import { apiRequest } from '../config/api';
+import { colors, radius } from '../theme';
 
 const SKELETON_ARRAY = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -29,23 +31,15 @@ const LoadingSkeleton = () => (
 const ProductGetByCategoryId = () => {
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { t, i18n } = useTranslation();
-    const token = localStorage.getItem('access_token');
+    const { i18n } = useTranslation();
 
     const getCategories = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/categories', {
-                method: 'GET',
-                headers: {
-                    Authorization: 'Bearer ' + token,
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            });
-            const json = await response.json();
-            setCategories(json.data);
+            const json = await apiRequest('/categories');
+            setCategories(json.data || []);
         } catch (error) {
             console.error(error);
+            setCategories([]);
         } finally {
             setIsLoading(false);
         }

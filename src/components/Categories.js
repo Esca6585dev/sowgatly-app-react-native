@@ -1,27 +1,24 @@
 import React, {useEffect, useState} from 'react'
 import { Image, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import { apiRequest } from '../config/api';
+import { colors, radius, spacing } from '../theme';
 
 const Categories = () => {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
-    const { t, i18n } = useTranslation();
-    const token = localStorage.getItem('access_token');
+    const { i18n } = useTranslation();
+    const navigation = useNavigation();
 
     const getCategories = async () => {
+        setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/api/categories', {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-            const json = await response.json();
-            setData(json.data);
+            const json = await apiRequest('/categories');
+            setData(json.data || []);
         } catch (error) {
             console.error(error);
+            setData([]);
         } finally {
             setLoading(false);
         }
@@ -45,7 +42,7 @@ const Categories = () => {
     // Add a loading state check
     if (isLoading) {
         const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        
+
         return (
             <View>
                 <ScrollView style={styles.scrollView} horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -60,7 +57,7 @@ const Categories = () => {
                                         <View style={styles.categoryImageSuspend} />
                                     </TouchableOpacity>
                                 </View>
-                                
+
                                 {/* Bottom Row - 2 items */}
                                 <View style={styles.container}>
                                     <TouchableOpacity style={styles.block}>
@@ -113,10 +110,10 @@ const Categories = () => {
                                             style={styles.categoryImage}
                                             source={{ uri: chunk[0].image }}
                                         />
-                                    </TouchableOpacity> 
+                                    </TouchableOpacity>
                                 )}
                             </View>
-                            
+
                             {/* Bottom Row - 2 items */}
                             <View style={styles.container}>
                                 {chunk[1] && (
@@ -158,11 +155,11 @@ const Categories = () => {
 
 const styles = StyleSheet.create({
     scrollView: {
-        marginVertical: 5
+        marginVertical: spacing.xs
     },
     containerTwoLine: {
         flexDirection: 'row',
-        margin: 10,
+        margin: spacing.md,
     },
     patternContainer: {
         flexDirection: 'column',
@@ -174,28 +171,29 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     block: {
-        backgroundColor: '#e7e7e7',
+        backgroundColor: colors.surface,
         flexDirection: 'row',
         justifyContent: 'space-between',
         minWidth: 120,
         height: 47,
-        borderRadius: 5,
+        borderRadius: radius.sm,
         marginHorizontal: 2,
         padding: 5,
     },
     blockTop: {
-        backgroundColor: '#e7e7e7',
+        backgroundColor: colors.surface,
         flexDirection: 'row',
         justifyContent: 'space-between',
         minWidth: 120,
         height: 47,
-        borderRadius: 5,
+        borderRadius: radius.sm,
         padding: 5
     },
     blockText: {
         fontSize: 10,
         fontWeight: '500',
         maxWidth: 85,
+        color: colors.text,
     },
     categoryImage: {
         width: 40,
@@ -203,18 +201,18 @@ const styles = StyleSheet.create({
         marginLeft: 10
     },
     blockTextSuspend: {
-        backgroundColor: '#ccc',
+        backgroundColor: colors.skeleton,
         width: 75,
         height: 15,
-        borderRadius: 5,
+        borderRadius: radius.sm,
     },
     categoryImageSuspend: {
         width: 40,
         height: 40,
         marginLeft: 10,
-        backgroundColor: '#ccc',
-        borderRadius: '50%',
+        backgroundColor: colors.skeleton,
+        borderRadius: 20,
     }
 });
-  
+
 export default Categories;

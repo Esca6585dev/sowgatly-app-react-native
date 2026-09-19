@@ -3,23 +3,18 @@ import { ImageBackground, ScrollView, StyleSheet, View, Text, TouchableOpacity }
 import bgImageRose from '../../assets/banner-1.png';
 import bgImageHNY from '../../assets/banner-2.png';
 import { useTranslation } from 'react-i18next';
+import { apiRequest } from '../config/api';
+import { colors, radius } from '../theme';
 
 const Banners = () => {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
 
     const getCategories = async () => {
+        setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/api/categories?parent=1', {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer 1|MADVetcOYwHT7yYmWWQB9PLK6T1lQyvoBYI8Pqc559492981',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-            const json = await response.json();
+            const json = await apiRequest('/categories?parent=1');
 
             if (json.data && Array.isArray(json.data)) {
                 setData(json.data);
@@ -52,11 +47,11 @@ const Banners = () => {
                                 <TouchableOpacity>
                                     <View style={styles.bannerBlockSuspend}>
                                         <Text style={styles.bannerBlockTextSuspend}>
-                                            
+
                                         </Text>
                                     </View>
                                 </TouchableOpacity>
-                            </View>                   
+                            </View>
                         ))}
                     </View>
                 </ScrollView>
@@ -102,25 +97,26 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     bannerBlockSuspend: {
-        backgroundColor: '#e7e7e7',
+        backgroundColor: colors.skeleton,
         minWidth: 250,
         height: 98,
-        borderRadius: 5,
+        borderRadius: radius.sm,
         marginHorizontal: 2,
         padding: 15,
     },
     bannerBlockTextSuspend: {
-        backgroundColor: '#ccc',
+        backgroundColor: colors.skeleton,
         width: 150,
         height: 30,
-        borderRadius: 5,
+        borderRadius: radius.sm,
     },
     bannerBlock: {
         minWidth: 250,
         height: 98,
-        borderRadius: 5,
+        borderRadius: radius.sm,
         marginHorizontal: 2,
         padding: 15,
+        overflow: 'hidden',
     },
     bannerBlockText: {
         fontSize: 20,
@@ -128,5 +124,5 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
 });
-  
+
 export default Banners;

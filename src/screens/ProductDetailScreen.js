@@ -5,6 +5,7 @@ import HorizontalRule from '../components/HorizontalRule'
 import BottomButton from '../components/BottomButton'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { API_URL } from '../config/api'
 import starIcon from '../../assets/star.png'
 import starIconDefault from '../../assets/star-default.png'
 import arrow1 from '../../assets/Arrow1.png'
@@ -33,7 +34,7 @@ const ProductDetailScreen = ({ route }) => {
 
         <Image
           style={styles.mainImage}
-          source={{ uri: `http://localhost:8000/${data.images[imageID]?.url}` }}
+          source={{ uri: `${API_URL}/${data.images[imageID]?.url}` }}
         />
       </View>
       
@@ -47,7 +48,7 @@ const ProductDetailScreen = ({ route }) => {
               <Image
                 key={index}
                 style={[styles.image, (index == imageID) ? styles.active : '' ]}
-                source={{ uri: `http://localhost:8000/${item.url}` }}
+                source={{ uri: `${API_URL}/${item.url}` }}
               />
             </TouchableOpacity>
           </View>
@@ -97,12 +98,10 @@ const ProductDetailScreen = ({ route }) => {
           <Text style={styles.sectionName}>{t('Ratings and reviews')}</Text>
           
           <View style={styles.sectionAvatar}>
-            <Image style={styles.iconAvatar} source={`http://localhost:8000/${data.shop.image}`} />
+            <Image style={styles.iconAvatar} source={{ uri: `${API_URL}/${data.shop?.image}` }} />
 
             <View style={styles.textAvatar}>
               <Text style={styles.textAvatarName}>{data.shop.name}</Text>
-
-              {console.log(data.attributes)}
 
               <Text style={styles.textAvatarTime}>13:56</Text>
             </View>
@@ -184,7 +183,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   mainImage: {
-    height: '345px',
+    height: 345,
     width: '100%',
   },
   image: {
@@ -209,11 +208,11 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 26,
-    fontWeight: 600
+    fontWeight: '600'
   },
   sectionName: {
     fontSize: 20,
-    fontWeight: 600
+    fontWeight: '600'
   },
   sectionSize: {
     flexDirection: 'row',
@@ -277,7 +276,7 @@ const styles = StyleSheet.create({
   iconAvatar: {
     width: 48,
     height: 48,
-    borderRadius: '50%',
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: '#ccc',
   },
@@ -287,13 +286,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   textAvatarName: {
-    fontWeight: 600,
+    fontWeight: '600',
     fontSize: 18,
   },
   textAvatarTime: {
     fontSize: 14,
     color: '#999',
-    fontWeight: 600
+    fontWeight: '600'
   },
   starText: {
     fontSize: 16,

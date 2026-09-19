@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
+import { API_URL, apiRequest } from '../config/api';
 
 const getDiscount = (price, discount) => {
     return Math.floor(price-(price*discount)/100);
@@ -28,38 +29,14 @@ const Products = ({ category_id }) => {
 
     const getCategories = async () => {
         if (!category_id) return;
-        
-        // Check local storage first
-        const cached = localStorage.getItem('categories');
-        const token = localStorage.getItem('access_token');
 
-        if (cached) {
-            setData(JSON.parse(cached));
-            setLoading(false);
-            return;
-        }
-        
         setIsLoading(true);
         try {
-            const response = await fetch(`http://localhost:8000/api/product/category/${category_id}`, {
-                method: 'GET',
-                headers: {
-                    Authorization: 'Bearer ' + token,
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.status === 429) {
-                console.log('Rate limit exceeded. Please wait before trying again.');
-                // Maybe implement a retry mechanism with exponential backoff
-                return;
-            }
-            
-            const json = await response.json();
-            setData(json.data);
+            const json = await apiRequest(`/product/category/${category_id}`);
+            setData(json.data || []);
         } catch (error) {
             console.error('API Error:', error);
+            setData([]);
         } finally {
             setIsLoading(false);
         }
@@ -78,7 +55,7 @@ const Products = ({ category_id }) => {
                     <View style={styles.imageContainer}>
                         <Image
                             style={styles.productImage}
-                            source={{ uri: `http://localhost:8000/${item.images[0]?.url}` }}
+                            source={{ uri: `${API_URL}/${item.images[0]?.url}` }}
                             resizeMode="cover"
                         />
                         <TouchableOpacity

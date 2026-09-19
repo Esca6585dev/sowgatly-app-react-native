@@ -1,21 +1,31 @@
-import { StyleSheet, Text, Pressable } from 'react-native'
+import { StyleSheet, Text, Pressable, ActivityIndicator } from 'react-native'
 import React from 'react'
+import { colors, radius, spacing, typography } from '../theme'
 
-const CustomButton = ({ onPress, text, type = "PRIMARY", bgColor, fgColor }) => {
+const CustomButton = ({ onPress, text, type = 'PRIMARY', bgColor, fgColor, disabled, loading }) => {
+  const isDisabled = disabled || loading;
+
   return (
-    <Pressable 
-        onPress={onPress} 
-        style={[
-            styles.container, 
+    <Pressable
+        onPress={onPress}
+        disabled={isDisabled}
+        style={({ pressed }) => [
+            styles.container,
             styles[`container_${type}`],
-            bgColor ? {backgroundColor: bgColor} : {},
+            bgColor ? { backgroundColor: bgColor } : {},
+            isDisabled && styles.container_DISABLED,
+            pressed && !isDisabled && styles.container_PRESSED,
         ]}>
-      <Text 
-        style={[
-            styles.text, 
-            styles[`text_${type}`],
-            fgColor ? {color: fgColor} : {}
-        ]}>{text}</Text>
+      {loading ? (
+        <ActivityIndicator color={type === 'PRIMARY' ? colors.textInverse : colors.primary} />
+      ) : (
+        <Text
+          style={[
+              styles.text,
+              styles[`text_${type}`],
+              fgColor ? { color: fgColor } : {},
+          ]}>{text}</Text>
+      )}
     </Pressable>
   )
 }
@@ -25,27 +35,37 @@ export default CustomButton
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        padding: 15,
-        marginVertical: 5,
+        paddingVertical: spacing.md,
+        marginVertical: spacing.xs,
         alignItems: 'center',
-        borderRadius: 5,
+        justifyContent: 'center',
+        borderRadius: radius.md,
     },
     container_PRIMARY: {
-        backgroundColor: '#3b71f3',
+        backgroundColor: colors.primary,
     },
     container_SECONDARY: {
-        borderColor: '#3b71f3',
-        borderWidth: 2,
+        borderColor: colors.primary,
+        borderWidth: 1.5,
+        backgroundColor: colors.background,
     },
     container_TERTIARY: {},
+    container_PRESSED: {
+        opacity: 0.85,
+    },
+    container_DISABLED: {
+        opacity: 0.5,
+    },
     text: {
-        fontWeight: 'bold',
-        color: 'white',
+        fontWeight: typography.weight.semibold,
+        fontSize: typography.size.md,
+        color: colors.textInverse,
     },
     text_TERTIARY: {
-        color: 'gray',
+        color: colors.textMuted,
+        fontWeight: typography.weight.medium,
     },
     text_SECONDARY: {
-        color: '#3b71f3',
+        color: colors.primary,
     }
 })
