@@ -6,6 +6,8 @@ import BottomButton from '../components/BottomButton'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { API_URL } from '../config/api'
+import { useFavorites } from '../context/FavoritesContext'
+import { colors } from '../theme'
 import starIcon from '../../assets/star.png'
 import starIconDefault from '../../assets/star-default.png'
 import arrow1 from '../../assets/Arrow1.png'
@@ -16,19 +18,31 @@ const ProductDetailScreen = ({ route }) => {
   const images = data.images
   const [imageID, changeImage] = useState(0)
   const { t, i18n } = useTranslation()
-  const navigation = useNavigation()  
-  
+  const navigation = useNavigation()
+  const { isFavorite, toggleFavorite } = useFavorites()
+
   return (
     <View style={styles.container} >
 
       <View style={styles.headerImageSection}>
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.headerBackIcon}
         >
           <Ionicons
             name='chevron-back'
             size={24}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => toggleFavorite(data)}
+          style={styles.headerFavoriteIcon}
+        >
+          <Ionicons
+            name={isFavorite(data.id) ? 'heart' : 'heart-outline'}
+            size={22}
+            color={isFavorite(data.id) ? colors.danger : colors.text}
           />
         </TouchableOpacity>
 
@@ -178,6 +192,18 @@ const styles = StyleSheet.create({
     top: 20,
     left: 20,
     zIndex: 1,
+  },
+  headerFavoriteIcon: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 1,
+    backgroundColor: '#fff',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   container: {
     backgroundColor: '#fff',

@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { apiRequest } from '../config/api';
 import ProductCard from '../components/ProductCard';
+import { useFavorites } from '../context/FavoritesContext';
 import { colors, spacing, typography } from '../theme';
 
 const GAP = spacing.md;
@@ -18,7 +19,7 @@ const CollectionScreen = () => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState([]);
-    const [favorites, setFavorites] = useState([]);
+    const { isFavorite, toggleFavorite } = useFavorites();
 
     useEffect(() => {
         const load = async () => {
@@ -36,12 +37,6 @@ const CollectionScreen = () => {
 
         if (categoryId) load();
     }, [categoryId]);
-
-    const toggleFavorite = (productId) => {
-        setFavorites((prev) =>
-            prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
-        );
-    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -73,8 +68,8 @@ const CollectionScreen = () => {
                         <ProductCard
                             product={item}
                             cardWidth={CARD_WIDTH}
-                            isFavorite={favorites.includes(item.id)}
-                            onToggleFavorite={() => toggleFavorite(item.id)}
+                            isFavorite={isFavorite(item.id)}
+                            onToggleFavorite={() => toggleFavorite(item)}
                             onPress={() => navigation.navigate('ProductDetail', { data: item })}
                         />
                     )}

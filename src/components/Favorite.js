@@ -1,19 +1,51 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Dimensions, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import ProductCard from './ProductCard'
+import { useFavorites } from '../context/FavoritesContext'
 import { colors, spacing, typography } from '../theme'
 
-// There's no wishlist endpoint on the backend yet (products only support a
-// local, per-screen "favorite" toggle), so this tab can't show real saved
-// items. Once a `/favorites` API exists, fetch it here and render the
-// results with <ProductCard />, the same component Products.js uses.
+const GAP = spacing.md;
+const SCREEN_PADDING = spacing.lg;
+const CARD_WIDTH = (Dimensions.get('window').width - SCREEN_PADDING * 2 - GAP) / 2;
+
 const Favorite = () => {
+  const navigation = useNavigation();
+  const { products, isLoading, isFavorite, toggleFavorite, refresh } = useFavorites();
+
   return (
     <SafeAreaView style={styles.container}>
-      <Ionicons name="heart-outline" size={56} color={colors.textMuted} />
-      <Text style={styles.title}>Halananlar boş</Text>
-      <Text style={styles.subtitle}>Önümleriň ýanyndaky ýürejige basyp, halan zatlaryňyzy şu ýere goşuň</Text>
+      {isLoading && products.length === 0 ? (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : products.length === 0 ? (
+        <View style={styles.center}>
+          <Ionicons name="heart-outline" size={56} color={colors.textMuted} />
+          <Text style={styles.title}>Halananlar boş</Text>
+          <Text style={styles.subtitle}>Önümleriň ýanyndaky ýürejige basyp, halan zatlaryňyzy şu ýere goşuň</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={products}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={styles.list}
+          refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refresh} />}
+          renderItem={({ item }) => (
+            <ProductCard
+              product={item}
+              cardWidth={CARD_WIDTH}
+              isFavorite={isFavorite(item.id)}
+              onToggleFavorite={() => toggleFavorite(item)}
+              onPress={() => navigation.navigate('ProductDetail', { data: item })}
+            />
+          )}
+        />
+      )}
     </SafeAreaView>
   )
 }
@@ -23,9 +55,12 @@ export default Favorite
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
+  },
+  center: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.background,
     padding: spacing.xl,
   },
   title: {
@@ -39,5 +74,13 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginTop: spacing.xs,
     textAlign: 'center',
+  },
+  list: {
+    paddingHorizontal: SCREEN_PADDING,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+  row: {
+    justifyContent: 'space-between',
   },
 })

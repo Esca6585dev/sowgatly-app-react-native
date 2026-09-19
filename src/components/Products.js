@@ -3,20 +3,13 @@ import { FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { apiRequest } from '../config/api';
 import ProductCard from './ProductCard';
+import { useFavorites } from '../context/FavoritesContext';
 import { spacing } from '../theme';
 
 const Products = ({ category_id }) => {
     const [data, setData] = useState([]);
-    const [favorites, setFavorites] = useState([]);
     const navigation = useNavigation();
-
-    const toggleFavorite = (productId) => {
-        setFavorites((prevFavorites) =>
-            prevFavorites.includes(productId)
-                ? prevFavorites.filter((id) => id !== productId)
-                : [...prevFavorites, productId]
-        );
-    };
+    const { isFavorite, toggleFavorite } = useFavorites();
 
     const getProducts = async () => {
         if (!category_id) return;
@@ -46,8 +39,8 @@ const Products = ({ category_id }) => {
                 <ProductCard
                     product={item}
                     onPress={() => navigation.navigate('ProductDetail', { data: item })}
-                    isFavorite={favorites.includes(item.id)}
-                    onToggleFavorite={() => toggleFavorite(item.id)}
+                    isFavorite={isFavorite(item.id)}
+                    onToggleFavorite={() => toggleFavorite(item)}
                 />
             )}
             horizontal
