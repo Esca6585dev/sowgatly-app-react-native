@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native'
 import { Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { apiRequest } from '../config/api';
+import { colors } from '../theme';
 
 const getDiscount = (price, discount) => {
     return Math.floor(price-(price*discount)/100);
@@ -8,6 +11,7 @@ const getDiscount = (price, discount) => {
 
 const BottomButton = ({data}) => {
     const [counter, setCounter] = useState(1);
+    const { i18n } = useTranslation();
 
     // Function is called everytime increment button is clicked
     const incrementNumber = () => {
@@ -25,17 +29,17 @@ const BottomButton = ({data}) => {
         }
     };
 
-    const addToCart = () => {
-        const discountedPrice = getDiscount(data.price, data.discount);
-        const totalPrice = discountedPrice * counter;
-    
-        // Implement logic to add the item to cart using React Native's AsyncStorage
-        // This example demonstrates using a simulated storage mechanism (replace with actual storage)
-        const simulatedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        simulatedCart.push({ ...data, quantity: counter, totalPrice });
-        localStorage.setItem('cart', JSON.stringify(simulatedCart));
-    
-        console.log('Added to cart:', simulatedCart);
+    const addToCart = async () => {
+        try {
+            await apiRequest('/cart/add', {
+                method: 'POST',
+                body: { product_id: data.id, quantity: counter },
+            });
+            const label = data.name?.[i18n.language] || data.name?.tm || 'Önüm';
+            Alert.alert('Sebede goşuldy', `${label} sebede goşuldy.`);
+        } catch (error) {
+            Alert.alert('Ýalňyşlyk', error.message || 'Sebede goşup bolmady.');
+        }
     };
     
     return (
@@ -50,7 +54,7 @@ const BottomButton = ({data}) => {
 
                     <TextInput
                         style={styles.input}
-                        value={counter}
+                        value={String(counter)}
                         keyboardType='numeric'
                     />
                     <TouchableOpacity
@@ -80,7 +84,7 @@ export default BottomButton
 const styles = StyleSheet.create({
     bottomContainer: {
         width: '100%',
-        height: '92px',
+        height: 92,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
         ...Platform.select({
@@ -123,7 +127,7 @@ const styles = StyleSheet.create({
         }),
     },
     bottomRight: {
-        backgroundColor: '#000',
+        backgroundColor: colors.primary,
         borderRadius: 10,
         width: 210,
         height: 50,

@@ -5,6 +5,9 @@ import HorizontalRule from '../components/HorizontalRule'
 import BottomButton from '../components/BottomButton'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { API_URL } from '../config/api'
+import { useFavorites } from '../context/FavoritesContext'
+import { colors } from '../theme'
 import starIcon from '../../assets/star.png'
 import starIconDefault from '../../assets/star-default.png'
 import arrow1 from '../../assets/Arrow1.png'
@@ -15,13 +18,14 @@ const ProductDetailScreen = ({ route }) => {
   const images = data.images
   const [imageID, changeImage] = useState(0)
   const { t, i18n } = useTranslation()
-  const navigation = useNavigation()  
-  
+  const navigation = useNavigation()
+  const { isFavorite, toggleFavorite } = useFavorites()
+
   return (
     <View style={styles.container} >
 
       <View style={styles.headerImageSection}>
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.headerBackIcon}
         >
@@ -31,9 +35,20 @@ const ProductDetailScreen = ({ route }) => {
           />
         </TouchableOpacity>
 
+        <TouchableOpacity
+          onPress={() => toggleFavorite(data)}
+          style={styles.headerFavoriteIcon}
+        >
+          <Ionicons
+            name={isFavorite(data.id) ? 'heart' : 'heart-outline'}
+            size={22}
+            color={isFavorite(data.id) ? colors.danger : colors.text}
+          />
+        </TouchableOpacity>
+
         <Image
           style={styles.mainImage}
-          source={{ uri: `http://localhost:8000/${data.images[imageID]?.url}` }}
+          source={{ uri: `${API_URL}/${data.images[imageID]?.url}` }}
         />
       </View>
       
@@ -47,7 +62,7 @@ const ProductDetailScreen = ({ route }) => {
               <Image
                 key={index}
                 style={[styles.image, (index == imageID) ? styles.active : '' ]}
-                source={{ uri: `http://localhost:8000/${item.url}` }}
+                source={{ uri: `${API_URL}/${item.url}` }}
               />
             </TouchableOpacity>
           </View>
@@ -56,7 +71,7 @@ const ProductDetailScreen = ({ route }) => {
       )}
       
       <View style={styles.productDetails}>
-        <Text style={styles.productName}>{data.name[i18n.translator.language]}</Text>
+        <Text style={styles.productName}>{data.name?.[i18n.language] || data.name?.tm}</Text>
         
         <View style={styles.starContainer}>
           <Image style={styles.iconStar} source={starIcon} />
@@ -90,19 +105,17 @@ const ProductDetailScreen = ({ route }) => {
 
         <View style={styles.section}>
           <Text style={styles.sectionName}>{t('Description')}</Text>
-          <Text style={styles.sectionDescription}>{data.description[i18n.translator.language]}</Text>
+          <Text style={styles.sectionDescription}>{data.description?.[i18n.language] || data.description?.tm}</Text>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionName}>{t('Ratings and reviews')}</Text>
           
           <View style={styles.sectionAvatar}>
-            <Image style={styles.iconAvatar} source={`http://localhost:8000/${data.shop.image}`} />
+            <Image style={styles.iconAvatar} source={{ uri: `${API_URL}/${data.shop?.image}` }} />
 
             <View style={styles.textAvatar}>
               <Text style={styles.textAvatarName}>{data.shop.name}</Text>
-
-              {console.log(data.attributes)}
 
               <Text style={styles.textAvatarTime}>13:56</Text>
             </View>
@@ -180,11 +193,23 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 1,
   },
+  headerFavoriteIcon: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 1,
+    backgroundColor: '#fff',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     backgroundColor: '#fff',
   },
   mainImage: {
-    height: '345px',
+    height: 345,
     width: '100%',
   },
   image: {
@@ -209,11 +234,11 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 26,
-    fontWeight: 600
+    fontWeight: '600'
   },
   sectionName: {
     fontSize: 20,
-    fontWeight: 600
+    fontWeight: '600'
   },
   sectionSize: {
     flexDirection: 'row',
@@ -277,7 +302,7 @@ const styles = StyleSheet.create({
   iconAvatar: {
     width: 48,
     height: 48,
-    borderRadius: '50%',
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: '#ccc',
   },
@@ -287,13 +312,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   textAvatarName: {
-    fontWeight: 600,
+    fontWeight: '600',
     fontSize: 18,
   },
   textAvatarTime: {
     fontSize: 14,
     color: '#999',
-    fontWeight: 600
+    fontWeight: '600'
   },
   starText: {
     fontSize: 16,

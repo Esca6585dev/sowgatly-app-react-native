@@ -1,15 +1,24 @@
-import { StyleSheet, TextInput, View } from 'react-native'
+import { StyleSheet, TextInput, View, Text } from 'react-native'
 import React from 'react'
+import { colors, radius, spacing, typography } from '../theme'
 
-const CustomInput = ({value, setValue, placeholder, secureTextEntry}) => {
+const CustomInput = ({ value, setValue, placeholder, secureTextEntry, label, error, keyboardType, autoCapitalize = 'none', editable = true }) => {
   return (
-    <View style={styles.container}>
-      <TextInput 
-        value={value}
-        onChangeText={setValue}
-        placeholder={placeholder}
-        secureTextEntry={secureTextEntry}
-        style={styles.input} />
+    <View style={styles.wrapper}>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
+      <View style={[styles.container, error && styles.containerError]}>
+        <TextInput
+          value={value}
+          onChangeText={setValue}
+          placeholder={placeholder}
+          placeholderTextColor={colors.textMuted}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType}
+          autoCapitalize={autoCapitalize}
+          editable={editable}
+          style={styles.input} />
+      </View>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   )
 }
@@ -17,19 +26,36 @@ const CustomInput = ({value, setValue, placeholder, secureTextEntry}) => {
 export default CustomInput
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
+  wrapper: {
     width: '100%',
-    borderColor: '#e8e8e8',
+    marginVertical: spacing.xs,
+  },
+  label: {
+    fontSize: typography.size.sm,
+    fontWeight: typography.weight.medium,
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  container: {
+    backgroundColor: colors.surface,
+    width: '100%',
+    borderColor: colors.border,
     borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 5,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+  },
+  containerError: {
+    borderColor: colors.danger,
   },
   input: {
     width: '100%',
-    maxWidth: 300,
-    maxHeight: 200,
-    color: 'gray'
-  }
+    height: 48,
+    fontSize: typography.size.md,
+    color: colors.text,
+  },
+  errorText: {
+    color: colors.danger,
+    fontSize: typography.size.xs,
+    marginTop: spacing.xs,
+  },
 })

@@ -4,9 +4,10 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
+import { colors, spacing, typography } from '../theme'
 
 const Navbar = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   return (
@@ -17,27 +18,25 @@ const Navbar = () => {
 
         <View style={styles.containerLeft}>
           <Text style={styles.cityName}>Aşgabat</Text>
-            <Icon name="angle-down" style={styles.iconAngleDown} size={20} color={'#000'} />
+            <Icon name="angle-down" style={styles.iconAngleDown} size={20} color={colors.text} />
         </View>
 
         <View style={styles.containerRight}>
-          <Text style={styles.notification}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Notifications')}
-            >
-              <Ionicons name="notifications-outline" style={styles.iconNotificationOutline} size={20} color={'#000'} />
-            </TouchableOpacity>
-          </Text>
-          
-          <Text style={styles.cart}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Cart')}
-            >
-              <Ionicons name="cart" style={styles.iconCart} size={20} color={'#000'} />
-            </TouchableOpacity>
-          </Text>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('Notifications')}
+          >
+            <Ionicons name="notifications-outline" size={20} color={colors.text} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('Cart')}
+          >
+            <Ionicons name="cart" size={20} color={colors.text} />
+          </TouchableOpacity>
         </View>
-        
+
       </View>
     </View>
   )
@@ -47,25 +46,26 @@ export default Navbar
 
 const styles = StyleSheet.create({
   bgColorWhite: {
-    backgroundColor: '#fff'
+    backgroundColor: colors.background
   },
   city: {
-    color: '#00000080',
-    paddingLeft: '10px',
-    paddingRight: '10px',
-    paddingTop: '10px',
-    fontSize: '17px'
+    color: colors.textMuted,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+    fontSize: typography.size.md,
   },
   cityName: {
-    fontStyle: 'bold',
-    fontSize: '19px'
+    fontWeight: typography.weight.bold,
+    fontSize: typography.size.lg,
+    color: colors.text,
   },
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingLeft: '10px',
-    paddingRight: '10px',
-    paddingTop: '2px',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.sm,
   },
   containerLeft: {
     flexDirection: 'row',
@@ -73,16 +73,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   containerRight: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   iconAngleDown: {
-    paddingLeft: '5px',
+    paddingLeft: spacing.xs,
   },
-  iconCart: {
-    fontSize: '20px',
+  iconButton: {
+    marginLeft: spacing.md,
   },
-  iconNotificationOutline: {
-    fontSize: '20px',
-    marginRight: '10px'
-  }
 });

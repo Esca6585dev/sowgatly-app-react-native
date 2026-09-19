@@ -1,9 +1,11 @@
-import { React, useState, useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native'
-import { StyleSheet, Text } from 'react-native'
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
+import { useAuth } from '../context/AuthContext'
+import { colors } from '../theme'
 
 // Import your components
 import Header from '../components/Header'
@@ -16,13 +18,15 @@ import Account from '../components/Account'
 // Import your screens
 import NotificationsScreen from '../screens/NotificationsScreen'
 import ProductDetailScreen from '../screens/ProductDetailScreen'
+import CollectionScreen from '../screens/CollectionScreen'
+import WelcomeScreen from '../screens/WelcomeScreen'
 import LoginScreen from '../screens/LoginScreen'
 import OTPScreen from '../screens/OTPScreen'
+import RegisterScreen from '../screens/RegisterScreen'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
-// Tab Navigator Component
 const TabNavigator = () => {
   return (
     <Tab.Navigator
@@ -47,81 +51,57 @@ const TabNavigator = () => {
         tabBarLabel: () => {
           return <Text style={styles.tabIconTitle}>{route.name}</Text>
         },
-        tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'black',
-        tabBarStyle: { backgroundColor: 'white', height: 60 },
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.textMuted,
+        tabBarStyle: { backgroundColor: colors.background, height: 60 },
       })}
     >
-      <Tab.Screen name="Main" component={Main} options={{header: () => <Header />}}/>
-      <Tab.Screen name="Favorite" component={Favorite} options={{header: () => <Header />}}/>
-      <Tab.Screen name="Chat" component={Chat} options={{header: () => <Header />}}/>
-      <Tab.Screen name="Cart" component={Cart} options={{header: () => <Header />}}/>
-      <Tab.Screen name="Account" component={Account} options={{header: () => '' }}/>
-
+      <Tab.Screen name="Main" component={Main} options={{ header: () => <Header /> }} />
+      <Tab.Screen name="Favorite" component={Favorite} options={{ header: () => <Header /> }} />
+      <Tab.Screen name="Chat" component={Chat} options={{ header: () => <Header /> }} />
+      <Tab.Screen name="Cart" component={Cart} options={{ header: () => <Header /> }} />
+      <Tab.Screen name="Account" component={Account} options={{ headerShown: false }} />
     </Tab.Navigator>
   )
 }
 
-const HomeStackNavigator = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // State for auth
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Welcome" component={WelcomeScreen} />
+    <Stack.Screen name="LoginScreen" component={LoginScreen} />
+    <Stack.Screen name="OTPScreen" component={OTPScreen} />
+    <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+  </Stack.Navigator>
+)
 
-  useEffect(() => {
-      const checkAuth = async () => {
-          try {
-              const token = localStorage.getItem('access_token');
-              setIsAuthenticated(!!token);
-          } catch (error) {
-              console.error("Error checking auth:", error);
-              setIsAuthenticated(false);
-          }
-      };
-      checkAuth();
-  }, []);
+const MainStack = () => (
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: colors.background },
+      headerTintColor: colors.text,
+      headerTitleStyle: { fontWeight: 'bold' },
+    }}>
+    <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ headerShown: false }} />
+    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false, title: 'Önüm' }} />
+    <Stack.Screen name="Collection" component={CollectionScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Bildirişler' }} />
+  </Stack.Navigator>
+)
 
-  if (isAuthenticated === null) {
-      return <Text>Loading...</Text>; // Loading state
+const AppNavigator = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
   }
 
   return (
-      <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: '#fff',
-        },
-        headerTintColor: '#000',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-      }}>
-          {isAuthenticated ? ( // Conditional screens
-              <>
-                  <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ headerShown: false }} />
-                  <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false, title: 'Product Detail' }} />
-                  <Stack.Screen name="Notifications" component={NotificationsScreen} />
-                  {/* ... other authenticated screens */}
-              </>
-          ) : (
-              <>
-                  <Stack.Screen name="LoginScreen" component={LoginScreen} />
-                  <Stack.Screen name="OTPScreen" component={OTPScreen} />
-                  {/* ... other unauthenticated screens */}
-              </>
-          )}
-      </Stack.Navigator>
-  );
-};
-
-// Main App Navigator
-const AppNavigator = () => {
-  return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen 
-          name="MainTabs" 
-          component={HomeStackNavigator}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
+      {isAuthenticated ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   )
 }
@@ -129,11 +109,17 @@ const AppNavigator = () => {
 export default AppNavigator
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background,
+  },
   tabIcon: {
     textAlign: 'center'
   },
   tabIconTitle: {
-    color: '#000',
+    color: colors.text,
     paddingVertical: 2
   }
 })

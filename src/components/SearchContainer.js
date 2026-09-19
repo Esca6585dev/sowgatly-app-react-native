@@ -1,33 +1,31 @@
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native'
-import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTranslation } from 'react-i18next';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { colors, radius, spacing, typography } from '../theme'
 
 const SearchContainer = () => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     return (
-        <SafeAreaProvider style={styles.searchContainer}>
+        <View style={styles.searchContainer}>
             <SafeAreaView style={styles.searchAreaView}>
                 <View style={styles.inputSearchBlock}>
-                    <Ionicons name="search" style={styles.iconSearch} size={20} color={'#000'} />
+                    <Ionicons name="search" style={styles.iconSearch} size={18} color={colors.textMuted} />
 
                     <TextInput
                         style={styles.inputText}
                         placeholder={t('Search by products')}
-                        theme={{ colors: { primary: '#fff' } }}
-                        underlineColor="#fff"
+                        placeholderTextColor={colors.textMuted}
                     />
                 </View>
 
-                <View style={styles.buttonSetting}>
-                    <TouchableOpacity>
-                        <Ionicons name="settings" size={20} color={'#000'} style={styles.iconSetting} />
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={styles.buttonSetting}>
+                    <Ionicons name="settings-outline" size={18} color={colors.text} />
+                </TouchableOpacity>
 
             </SafeAreaView>
-        </SafeAreaProvider>
+        </View>
     )
 }
 
@@ -35,45 +33,42 @@ export default SearchContainer
 
 const styles = StyleSheet.create({
     searchContainer: {
-        padding: '10px',
-        backgroundColor: '#fff'
+        padding: spacing.md,
+        backgroundColor: colors.background
     },
     searchAreaView: {
         flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between'
     },
     inputSearchBlock: {
-        width: '90%',
-        height: '28px',
-        border: '#00000040 1px solid',
-        borderRadius: '8px',
-        backgroundColor: '#F5F5F5',
-        paddingLeft: '10px',
+        flex: 1,
+        height: 40,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: radius.md,
+        backgroundColor: colors.surface,
+        paddingHorizontal: spacing.md,
         flexDirection: 'row',
         alignItems: 'center',
+        marginRight: spacing.sm,
     },
     iconSearch: {
-        color: '#ccc',
-        fontSize: '14px'
+        marginRight: spacing.sm,
     },
     inputText: {
-        fontSize: '10px',
-        height: '20px',
-        border: 'none',
-        borderBlockColor: 'none',
-        lineHeight: '12px',
-        paddingLeft: '10px',
-        width: '90%'
+        flex: 1,
+        fontSize: typography.size.sm,
+        color: colors.text,
     },
     buttonSetting: {
-        height: '28px',
-        width: '28px',
-        border: '#00000040 1px solid',
-        borderRadius: '8px',
-        backgroundColor: '#F5F5F5',
-    },
-    iconSetting: {
-        paddingLeft: '3px',
-        paddingTop: '2px'
+        height: 40,
+        width: 40,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: radius.md,
+        backgroundColor: colors.surface,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

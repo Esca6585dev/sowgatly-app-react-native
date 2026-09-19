@@ -1,85 +1,80 @@
-import { React, useState } from 'react';
-import { StyleSheet, ScrollView, View, Image, Alert } from 'react-native'
-import { Platform } from 'react-native';
-import * as Keychain from 'react-native-keychain'
+import React, { useState } from 'react';
+import { StyleSheet, ScrollView, View, Image, Text } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import Logo from '../../assets/img/logo/logo-white-2.png'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
-
-const storeToken = async (token) => {
-    if (Platform.OS === 'web') {
-        localStorage.setItem('access_token', token);
-        console.log('Token stored in browser.', token);
-    } else {
-        try {
-            await Keychain.setGenericPassword({ service: 'my_app_token', password: token });
-            console.log('Token stored securely on device.');
-        } catch (error) {
-            console.error('Error storing token on device:', error);
-        }
-    }
-}
+import { apiRequest } from '../config/api'
+import { useAuth } from '../context/AuthContext'
+import { colors, spacing, typography } from '../theme'
 
 const OTPScreen = ({ route }) => {
-    const {phoneNumber} = route.params
-    const [otp, setOtp] = useState('0000')
+    const { phoneNumber } = route.params
+    const [otp, setOtp] = useState('')
+    const [error, setError] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
     const navigation = useNavigation()
+    const { login } = useAuth()
 
     const onLoginPressed = async () => {
-        console.log('Login');
-    
+        if (otp.trim().length !== 4) {
+            setError('4 sanly kody giriziň');
+            return;
+        }
+
+        setError('');
+        setIsLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/api/login', {
+            const data = await apiRequest('/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    phone_number: phoneNumber,
-                    otp: otp,
-                }),
+                auth: false,
+                body: { phone_number: phoneNumber, otp },
             });
-    
-            console.log(response);
-            if (response.ok) {
-                const data = await response.json();
-                await storeToken(data.access_token); // Store token in the appropriate location
-                
-                navigation.navigate('HomeScreen');
-                
+
+            if (data.success) {
+                // Flips AuthContext.isAuthenticated, which switches AppNavigator
+                // into the authenticated stack automatically.
+                await login(data.access_token, data.user);
             } else {
-                const errorData = await response.json();
-                console.error('Login failed:', errorData);
-                Alert.alert('Login Failed', errorData.message || 'Invalid phone number or OTP.');
-                return;
+                setError(Array.isArray(data.message) ? data.message[0] : (data.message || 'Kod nädogry'));
             }
-    
-    
-        } catch (error) {
-            console.error('Error during login:', error);
-            Alert.alert('Error', 'An error occurred. Please try again later.');
+        } catch (e) {
+            setError(e.message || 'Näsazlyk ýüze çykdy. Gaýtadan synanyşyň.');
+        } finally {
+            setIsLoading(false);
         }
     }
 
     return (
-        <View style={styles.container}>
-            <Image source={Logo} style={[styles.logo]} resizeMode="contain" />
-            
-            <ScrollView>
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scroll}>
+                <Image source={Logo} style={styles.logo} resizeMode="contain" />
+                <Text style={styles.title}>Kody giriziň</Text>
+                <Text style={styles.subtitle}>{phoneNumber} belgä iberilen kody giriziň</Text>
+
                 <CustomInput
-                    placeholder="OTP Number"
+                    placeholder="0000"
+                    label="Tassyklama kody"
                     value={otp}
-                    setValue={setOtp}
+                    setValue={(v) => { setOtp(v); setError(''); }}
+                    keyboardType="number-pad"
+                    error={error}
                 />
 
-                <CustomButton 
-                    text="Login"
+                <CustomButton
+                    text="Girmek"
                     onPress={onLoginPressed}
+                    loading={isLoading}
+                />
+
+                <CustomButton
+                    text="Belgini üýtget"
+                    type="TERTIARY"
+                    onPress={() => navigation.goBack()}
                 />
             </ScrollView>
-        </View>
+        </SafeAreaView>
     )
 }
 
@@ -88,12 +83,29 @@ export default OTPScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: colors.background,
+    },
+    scroll: {
         alignItems: 'center',
-        padding: 20,
+        padding: spacing.xl,
     },
     logo: {
-        width: '70%',
-        maxWidth: 300,
-        maxHeight: 200,
-    }
+        width: '55%',
+        maxWidth: 220,
+        height: 110,
+        marginBottom: spacing.lg,
+        tintColor: colors.primary,
+    },
+    title: {
+        fontSize: typography.size.xxl,
+        fontWeight: typography.weight.bold,
+        color: colors.text,
+        marginBottom: spacing.xs,
+    },
+    subtitle: {
+        fontSize: typography.size.sm,
+        color: colors.textMuted,
+        marginBottom: spacing.xl,
+        textAlign: 'center',
+    },
 })
