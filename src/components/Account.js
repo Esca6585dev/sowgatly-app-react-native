@@ -1,21 +1,23 @@
-import { StyleSheet, ScrollView, View, Text, Image } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useAuth } from '../context/AuthContext'
 import CustomButton from './CustomButton'
 import { colors, radius, spacing, typography } from '../theme'
 
-const MenuRow = ({ icon, label }) => (
-  <View style={styles.menuRow}>
+const MenuRow = ({ icon, label, onPress }) => (
+  <TouchableOpacity style={styles.menuRow} onPress={onPress} disabled={!onPress}>
     <Ionicons name={icon} size={20} color={colors.text} style={styles.menuIcon} />
     <Text style={styles.menuLabel}>{label}</Text>
     <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-  </View>
+  </TouchableOpacity>
 );
 
 const Account = () => {
   const { user, logout } = useAuth();
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,9 +31,9 @@ const Account = () => {
         </View>
 
         <View style={styles.menu}>
-          <MenuRow icon="receipt-outline" label="Sargytlarym" />
+          <MenuRow icon="receipt-outline" label="Sargytlarym" onPress={() => navigation.navigate('Orders')} />
           <MenuRow icon="location-outline" label="Salgylarym" />
-          <MenuRow icon="heart-outline" label="Halananlarym" />
+          <MenuRow icon="heart-outline" label="Halananlarym" onPress={() => navigation.navigate('Favorite')} />
           <MenuRow icon="settings-outline" label="Sazlamalar" />
         </View>
 

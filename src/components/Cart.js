@@ -1,10 +1,18 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { API_URL, apiRequest } from '../config/api'
+import CustomButton from './CustomButton'
 import { colors, radius, spacing, typography } from '../theme'
+
+const getUnitPrice = (product) => {
+  if (!product) return 0;
+  return product.discount
+    ? Math.floor(product.price - (product.price * product.discount) / 100)
+    : product.price;
+};
 
 const CartItemRow = ({ item }) => (
   <View style={styles.itemRow}>
@@ -16,11 +24,12 @@ const CartItemRow = ({ item }) => (
       <Text style={styles.itemName} numberOfLines={2}>{item.product?.name}</Text>
       <Text style={styles.itemQty}>{item.quantity} sany</Text>
     </View>
-    <Text style={styles.itemPrice}>{Math.floor((item.product?.price || 0) * item.quantity)} TMT</Text>
+    <Text style={styles.itemPrice}>{Math.floor(getUnitPrice(item.product) * item.quantity)} TMT</Text>
   </View>
 );
 
 const Cart = () => {
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -73,8 +82,14 @@ const Cart = () => {
         contentContainerStyle={styles.list}
       />
       <View style={styles.footer}>
-        <Text style={styles.totalLabel}>Jemi</Text>
-        <Text style={styles.totalValue}>{Math.floor(total)} TMT</Text>
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>Jemi</Text>
+          <Text style={styles.totalValue}>{Math.floor(total)} TMT</Text>
+        </View>
+        <CustomButton
+          text="Sargyt beriň"
+          onPress={() => navigation.navigate('Checkout', { items, total })}
+        />
       </View>
     </SafeAreaView>
   )
@@ -141,12 +156,15 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     padding: spacing.lg,
     borderTopWidth: 1,
     borderTopColor: colors.border,
+  },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
   },
   totalLabel: {
     fontSize: typography.size.md,
