@@ -1,0 +1,623 @@
+<title>Sowgatly Web Preview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Tokens mirror src/theme/index.js */
+:root {
+  --background: #FFFFFF;
+  --surface: #F6F6F8;
+  --surface-alt: #EFEFF2;
+  --border: #E4E4E9;
+  --text: #131316;
+  --text-muted: #7A7A85;
+  --text-inverse: #FFFFFF;
+  --primary: #131316;
+  --accent: #C9973A;
+  --accent-muted: #F3E6CD;
+  --success: #22A559;
+  --danger: #E5484D;
+  --overlay: rgba(19, 19, 22, 0.5);
+
+  --xs: 4px; --sm: 8px; --md: 12px; --lg: 16px; --xl: 24px; --xxl: 32px;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 24px;
+
+  /* page around the phone */
+  --page: #EDEBE6;
+  --page-ink: #131316;
+  --page-muted: #6E6A62;
+  --frame: #131316;
+  --font: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #17161A;
+    --page-ink: #F2F0EC;
+    --page-muted: #A19C93;
+    --frame: #000000;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #17161A;
+  --page-ink: #F2F0EC;
+  --page-muted: #A19C93;
+  --frame: #000000;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--page-ink);
+  font-family: var(--font);
+  padding-inline: 16px;
+  padding-block: 24px;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.stage {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 48px;
+  align-items: start;
+}
+.intro { padding-top: 40px; max-width: 46ch; }
+.intro .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.intro h1 { font-size: 40px; line-height: 1.05; margin: 10px 0 14px; font-weight: 800; letter-spacing: -.02em; text-wrap: balance; }
+.intro p { color: var(--page-muted); font-size: 15px; line-height: 1.6; margin: 0 0 12px; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.jump button {
+  border: 1px solid color-mix(in srgb, var(--page-ink) 18%, transparent);
+  border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600;
+}
+.jump button[aria-pressed="true"] { background: var(--page-ink); color: var(--page); border-color: var(--page-ink); }
+.lang { display: flex; gap: 4px; margin-top: 18px; font-size: 13px; color: var(--page-muted); align-items: center; }
+.lang button { padding: 4px 8px; border-radius: 6px; font-weight: 700; color: var(--page-muted); }
+.lang button[aria-pressed="true"] { color: var(--page-ink); background: color-mix(in srgb, var(--page-ink) 10%, transparent); }
+
+/* ---------- Phone ---------- */
+.phone {
+  width: 390px; max-width: 100%;
+  height: 800px; max-height: calc(100vh - 48px); min-height: 640px;
+  background: var(--frame);
+  border-radius: 48px;
+  padding: 12px;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.35);
+}
+.screen {
+  position: relative;
+  height: 100%;
+  background: var(--background);
+  color: var(--text);
+  border-radius: 38px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  font-size: 14px;
+}
+.statusbar {
+  flex: none; height: 40px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 26px; font-size: 13px; font-weight: 700;
+}
+.statusbar .notch { width: 96px; height: 26px; background: var(--frame); border-radius: 20px; }
+.statusbar .sys { display: flex; gap: 5px; align-items: center; }
+.statusbar svg { width: 16px; height: 16px; }
+
+.view { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.view::-webkit-scrollbar { display: none; }
+
+/* Navbar + Search (components/Navbar.js, SearchContainer.js) */
+.city { color: var(--text-muted); padding: var(--md) var(--md) 0; font-size: 16px; }
+.navrow { display: flex; justify-content: space-between; align-items: center; padding: var(--xs) var(--md) var(--sm); }
+.cityname { display: flex; align-items: center; gap: var(--xs); font-weight: 700; font-size: 18px; }
+.navicons { display: flex; gap: var(--md); }
+.navicons button { position: relative; display: grid; place-items: center; }
+.dot { position: absolute; top: -3px; right: -5px; min-width: 16px; height: 16px; border-radius: 8px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 800; display: grid; place-items: center; padding: 0 4px; }
+.search { display: flex; gap: var(--sm); padding: var(--md); }
+.search label {
+  flex: 1; height: 40px; border: 1px solid var(--border); border-radius: var(--r-md);
+  background: var(--surface); display: flex; align-items: center; gap: var(--sm); padding: 0 var(--md);
+  color: var(--text-muted);
+}
+.search input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 14px; color: var(--text); outline: none; }
+.search input::placeholder { color: var(--text-muted); }
+.iconbtn { width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); display: grid; place-items: center; flex: none; }
+
+/* Categories */
+.hscroll { display: flex; overflow-x: auto; scrollbar-width: none; }
+.hscroll::-webkit-scrollbar { display: none; }
+.cats { padding: var(--sm) var(--sm); gap: var(--sm); }
+.cat { width: 64px; flex: none; display: flex; flex-direction: column; align-items: center; gap: var(--xs); }
+.cat .circle { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); }
+.cat .circle svg { width: 26px; height: 26px; }
+.cat span { font-size: 12px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.cat.active .circle { background: var(--accent-muted); box-shadow: inset 0 0 0 2px var(--accent); }
+
+/* Banners */
+.banners { gap: 7px; padding: 2px 12px var(--sm); }
+.banner {
+  flex: none; width: 250px; height: 98px; border-radius: var(--r-sm); padding: 15px;
+  background-size: cover; background-position: center; color: #fff; font-size: 20px; text-align: left;
+}
+
+/* Section header + product row */
+.section-head { display: flex; justify-content: space-between; align-items: baseline; padding: var(--lg) var(--md) var(--sm); }
+.section-head h2 { margin: 0; font-size: 18px; font-weight: 700; }
+.section-head button { font-size: 13px; color: var(--accent); font-weight: 700; }
+.row { gap: var(--md); padding: var(--xs) var(--md); }
+
+.card { width: 150px; flex: none; text-align: left; display: flex; flex-direction: column; }
+.card .img { position: relative; aspect-ratio: 1; width: 100%; border-radius: var(--r-md); overflow: hidden; background: var(--surface); }
+.card .img .art { position: absolute; inset: 0; }
+.fav {
+  position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--background); display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.fav svg { width: 14px; height: 14px; }
+.fav.on { color: var(--danger); }
+.badge { position: absolute; top: 6px; left: 6px; background: var(--accent); color: var(--text-inverse); border-radius: var(--r-sm); padding: 2px var(--sm); font-size: 12px; font-weight: 700; }
+.card .name { font-size: 14px; font-weight: 500; margin-top: var(--sm); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card .shop { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.price { display: flex; align-items: baseline; gap: var(--xs); margin-top: var(--xs); font-variant-numeric: tabular-nums; }
+.price b { font-size: 14px; }
+.price s { font-size: 12px; color: var(--text-muted); }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--md); padding: var(--lg); }
+.grid .card { width: auto; }
+
+.langbar { display: flex; justify-content: center; gap: var(--sm); padding: var(--xl) var(--md); }
+.langbar button { padding: 6px 12px; border-radius: var(--r-md); border: 1px solid var(--border); font-size: 13px; font-weight: 600; }
+.langbar button[aria-pressed="true"] { background: var(--primary); color: var(--text-inverse); border-color: var(--primary); }
+
+/* Empty states */
+.empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--xl); text-align: center; color: var(--text-muted); }
+.empty svg { width: 56px; height: 56px; }
+.empty h3 { margin: var(--md) 0 0; font-size: 18px; font-weight: 600; color: var(--text); }
+.empty p { margin: var(--xs) 0 0; font-size: 14px; max-width: 30ch; }
+
+/* Cart */
+.cart-list { padding: var(--lg); display: flex; flex-direction: column; gap: var(--sm); }
+.cart-item { display: flex; align-items: center; gap: var(--md); background: var(--surface); border-radius: var(--r-md); padding: var(--md); }
+.cart-item .thumb { width: 56px; height: 56px; border-radius: var(--r-sm); overflow: hidden; flex: none; position: relative; }
+.cart-item .info { flex: 1; min-width: 0; }
+.cart-item .info div:first-child { font-weight: 500; }
+.stepper { display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; }
+.stepper button { width: 24px; height: 24px; border-radius: 6px; background: var(--background); border: 1px solid var(--border); font-weight: 700; line-height: 1; }
+.stepper span { font-size: 13px; color: var(--text-muted); font-variant-numeric: tabular-nums; min-width: 42px; text-align: center; }
+.cart-item .sum { font-weight: 600; font-variant-numeric: tabular-nums; }
+.cart-foot { flex: none; border-top: 1px solid var(--border); padding: var(--lg); display: flex; flex-direction: column; gap: var(--md); background: var(--background); }
+.cart-foot .tot { display: flex; justify-content: space-between; align-items: center; }
+.cart-foot .tot span { color: var(--text-muted); font-size: 16px; }
+.cart-foot .tot b { font-size: 20px; font-variant-numeric: tabular-nums; }
+.btn { height: 48px; border-radius: var(--r-md); background: var(--primary); color: var(--text-inverse); font-weight: 700; font-size: 16px; width: 100%; }
+.btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+/* Account */
+.acc { padding: var(--xl); }
+.acc-head { display: flex; flex-direction: column; align-items: center; margin-bottom: var(--xxl); }
+.avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--primary); color: #fff; display: grid; place-items: center; margin-bottom: var(--md); }
+.avatar svg { width: 32px; height: 32px; }
+.acc-head b { font-size: 20px; }
+.acc-head span { color: var(--text-muted); margin-top: var(--xs); }
+.menu { background: var(--surface); border-radius: var(--r-lg); overflow: hidden; margin-bottom: var(--xxl); }
+.menu button { width: 100%; display: flex; align-items: center; gap: var(--md); padding: var(--md) var(--lg); border-bottom: 1px solid var(--border); font-size: 16px; text-align: left; }
+.menu button:last-child { border-bottom: 0; }
+.menu button span { flex: 1; }
+.menu button .chev { color: var(--text-muted); }
+
+/* Detail (screens/ProductDetailScreen.js) */
+.detail { position: absolute; inset: 0; background: var(--background); z-index: 5; display: flex; flex-direction: column; transform: translateX(100%); transition: transform .28s ease; }
+.detail.open { transform: none; }
+.detail .scroll { flex: 1; overflow-y: auto; scrollbar-width: none; }
+.hero { position: relative; height: 345px; background: var(--surface); }
+.hero .art { position: absolute; inset: 0; }
+.hero .back, .hero .fav-lg { position: absolute; top: 52px; z-index: 1; width: 36px; height: 36px; border-radius: 50%; background: var(--background); display: grid; place-items: center; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+.hero .back { left: 20px; }
+.hero .fav-lg { right: 20px; }
+.hero .fav-lg.on { color: var(--danger); }
+.thumbs { gap: 10px; padding: 10px; }
+.thumbs button { width: 84px; height: 84px; flex: none; border-radius: 10px; overflow: hidden; position: relative; opacity: .5; }
+.thumbs button.active { opacity: 1; box-shadow: inset 0 0 0 2px var(--accent); }
+.pd { padding: 10px 16px 24px; }
+.pd h1 { font-size: 26px; font-weight: 700; margin: 0; line-height: 1.2; text-wrap: balance; }
+.pd .shopline { color: var(--text-muted); margin-top: 4px; }
+.pd .rating { display: flex; align-items: center; gap: 8px; margin: 16px 0 12px; font-size: 16px; }
+.pd .rating svg { width: 22px; height: 22px; color: var(--accent); }
+.pd hr { border: 0; border-top: 1px solid var(--border); margin: 12px 0; }
+.pd h2 { font-size: 20px; font-weight: 600; margin: 16px 0 8px; }
+.pd p { font-size: 16px; line-height: 1.5; margin: 0; }
+.sizes { display: flex; gap: 20px; font-size: 15px; color: var(--text); }
+.sizes span { display: inline-flex; align-items: center; gap: 8px; }
+.sizes svg { width: 14px; height: 14px; color: var(--text-muted); }
+.review { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
+.review .ava { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: var(--accent-muted); display: grid; place-items: center; font-weight: 800; color: var(--accent); }
+.review b { display: block; font-size: 18px; }
+.review small { color: var(--text-muted); font-weight: 600; font-size: 14px; }
+.stars-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 16px; }
+.stars { display: flex; gap: 6px; color: var(--accent); }
+.stars svg { width: 16px; height: 16px; }
+.stars .off { color: var(--border); }
+.comment { margin-top: 12px; padding: 12px; background: var(--surface); border-radius: var(--r-md); }
+.buybar { flex: none; display: flex; align-items: center; gap: var(--md); padding: var(--md) var(--lg) var(--lg); border-top: 1px solid var(--border); background: var(--background); }
+.buybar .p { font-variant-numeric: tabular-nums; }
+.buybar .p b { display: block; font-size: 20px; }
+.buybar .p s { font-size: 13px; color: var(--text-muted); }
+.buybar .btn { flex: 1; }
+
+/* Tabbar (navigation/AppNavigator.js) */
+.tabbar { flex: none; height: 64px; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--border); background: var(--background); padding-bottom: 6px; }
+.tabbar button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--text-muted); font-size: 11px; position: relative; }
+.tabbar button span { color: var(--text); }
+.tabbar button.active { color: var(--accent); }
+.tabbar svg { width: 24px; height: 24px; }
+.tabbar .dot { top: 6px; right: calc(50% - 18px); }
+
+.toast { position: absolute; left: 50%; bottom: 80px; transform: translate(-50%, 20px); background: var(--primary); color: #fff; padding: 10px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; opacity: 0; transition: .2s; pointer-events: none; z-index: 9; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+svg { display: block; }
+.art { position: absolute; inset: 0; }
+.art svg { width: 100%; height: 100%; }
+
+@media (max-width: 820px) {
+  .stage { grid-template-columns: 1fr; gap: 24px; justify-items: center; }
+  .intro { padding-top: 0; text-align: left; justify-self: stretch; max-width: none; }
+  .intro h1 { font-size: 30px; }
+}
+@media (max-width: 440px) {
+  body { padding-inline: 0; }
+  .intro { padding-inline: 16px; }
+  .phone { border-radius: 0; padding: 0; width: 100%; height: 760px; max-height: none; box-shadow: none; }
+  .screen { border-radius: 0; }
+  .statusbar { display: none; }
+  .hero .back, .hero .fav-lg { top: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .detail, .toast { transition: none; } }
+</style>
+
+<div class="stage">
+  <section class="intro">
+    <div class="eyebrow">sowgatly-app-react-native → HTML / CSS</div>
+    <h1>Sowgatly, brauzerde</h1>
+    <p>React Native programmasynyň ekranlary arassa HTML we CSS bilen gaýtadan ýazyldy. Reňkler, aralyklar we burç radiuslary <code>src/theme/index.js</code> faýlyndan alnan.</p>
+    <p>Hemme zat işleýär: kategoriýa saýlaň, ýürejige basyp halananlara goşuň, önüme basyp jikme-jigini açyň, sebede goşuň.</p>
+    <div class="jump" id="jump" aria-label="Ekrana geç">
+      <button data-go="main">Baş sahypa</button>
+      <button data-go="detail">Önüm</button>
+      <button data-go="favorite">Halananlar</button>
+      <button data-go="cart">Sebet</button>
+      <button data-go="account">Hasap</button>
+    </div>
+    <div class="lang" id="langOuter">Dil:
+      <button data-lang="tm">TM</button><button data-lang="ru">RU</button><button data-lang="en">EN</button>
+    </div>
+  </section>
+
+  <div class="phone">
+    <div class="screen" id="screen">
+      <div class="statusbar"><span>9:41</span><span class="notch"></span><span class="sys" id="sys"></span></div>
+      <div class="view" id="view"></div>
+      <nav class="tabbar" id="tabbar"></nav>
+
+      <div class="detail" id="detail" aria-hidden="true">
+        <div class="scroll" id="detailBody"></div>
+        <div class="buybar" id="buybar"></div>
+      </div>
+      <div class="toast" id="toast" role="status"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---------- Icons (Ionicons-style, inline) ----------
+  const I = {
+    home: '<path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    homeF: '<path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z" fill="currentColor"/>',
+    heart: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    heartF: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" fill="currentColor"/>',
+    chat: '<path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 3V6a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    chatF: '<path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4 3V6a1 1 0 0 1 1-1z" fill="currentColor"/>',
+    cart: '<path d="M3 4h2l2.2 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 8H6.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19" r="1.5" fill="currentColor"/><circle cx="17" cy="19" r="1.5" fill="currentColor"/>',
+    cartF: '<path d="M3 4h2l2.2 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 8H6.2z" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="19" r="1.5" fill="currentColor"/><circle cx="17" cy="19" r="1.5" fill="currentColor"/>',
+    person: '<circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    personF: '<circle cx="12" cy="8" r="4.2" fill="currentColor"/><path d="M3.8 21c1-4.3 4.6-6.3 8.2-6.3s7.2 2 8.2 6.3z" fill="currentColor"/>',
+    bell: '<path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 1.5h-15zM10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    search: '<circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    settings: '<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    down: '<path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+    back: '<path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+    fwd: '<path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="currentColor"/>',
+    receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>',
+    pin: '<path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+    width: '<path d="M3 12h18M6 8l-3 4 3 4M18 8l3 4-3 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    height: '<path d="M12 3v18M8 6l4-3 4 3M8 18l4 3 4-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    signal: '<path d="M4 18h2v-3H4zM9 18h2v-6H9zM14 18h2V9h-2zM19 18h2V6h-2z" fill="currentColor"/>',
+    battery: '<rect x="2.5" y="7" width="17" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="4.5" y="9" width="11" height="6" rx="1" fill="currentColor"/><path d="M21 10.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    // category glyphs
+    rose: '<path d="M12 21v-8M12 16c-2 0-4-1-4.5-3M12 13c-3 0-5-2-5-5 2 0 3 .6 3.6 1.5C11 7 12 6 12 4c0 2 1 3 1.4 5.5C14 8.6 15 8 17 8c0 3-2 5-5 5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    cake: '<path d="M4 20h16M5 20v-6h14v6M5 16c1.5 1 3 1 4.7 0 1.6 1 3 1 4.6 0 1.7 1 3.2 1 4.7 0M8 14v-3h8v3M12 11V8M12 8c-1-.8-1-2 0-3 1 1 1 2.2 0 3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    gift: '<path d="M4 10h16v3H4zM5 13h14v8H5zM12 10v11M12 10c-2 0-4.5-.5-4.5-2.5S10 5 12 10zM12 10c2 0 4.5-.5 4.5-2.5S14 5 12 10z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+    balloon: '<ellipse cx="12" cy="9" rx="5" ry="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 15h2l-1 1.5zM12 16.5c0 2-2 2.5-1 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    toy: '<circle cx="12" cy="13" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7" cy="7" r="2.3" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="7" r="2.3" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="12" r=".9" fill="currentColor"/><circle cx="14" cy="12" r=".9" fill="currentColor"/><path d="M10.5 15.2c.9.7 2.1.7 3 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>',
+    perfume: '<rect x="6" y="9" width="12" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9V6h4v3M9 4h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+    choco: '<rect x="5" y="4" width="14" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 9.3h14M5 14.6h14M12 4v16" stroke="currentColor" stroke-width="1.6"/>'
+  };
+  const svg = (name, extra = '') => `<svg viewBox="0 0 24 24" aria-hidden="true" ${extra}>${I[name]}</svg>`;
+
+  // ---------- Strings (src/locales) ----------
+  const T = {
+    tm: { City: 'Şäher', Search: 'Önüm boýunça gözläň', Composition: 'Kompozisiýa', Size: 'Ölçegi', Description: 'Düşündiriş', Reviews: 'Reýtingler we synlar', Correspondence: 'Hat alyşmalar', PQ: 'Bahasy / hili', Service: 'Dükan hyzmaty', all: 'Hemmesi', popular: 'Meşhur sowgatlar', sale: 'Arzanladyşda', favEmpty: 'Halananlar boş', favEmptyP: 'Önümleriň ýanyndaky ýürejige basyp, halan zatlaryňyzy şu ýere goşuň', chatEmpty: 'Habarlaşma ýok', chatEmptyP: 'Sargydyňyz baradaky habarlar şu ýerde görkeziler', cartEmpty: 'Sebediňiz boş', cartEmptyP: 'Halan zatlaryňyzy sebede goşuň', total: 'Jemi', order: 'Sargyt et', add: 'Sebede goş', added: 'Sebede goşuldy', faved: 'Halananlara goşuldy', unfaved: 'Halananlardan aýryldy', pcs: 'sany', orders: 'Sargytlarym', addresses: 'Salgylarym', likes: 'Halananlarym', settings: 'Sazlamalar', logout: 'Ulgamdan çyk', width: 'Ini', height: 'Beýikligi', ordered: 'Sargyt kabul edildi', tabs: ['Esasy', 'Halanan', 'Çat', 'Sebet', 'Hasap'] },
+    ru: { City: 'Город', Search: 'Поиск по товарам', Composition: 'Состав', Size: 'Размер', Description: 'Описание', Reviews: 'Рейтинги и отзывы', Correspondence: 'Соответствие', PQ: 'Цена / качество', Service: 'Обслуживание магазина', all: 'Все', popular: 'Популярные подарки', sale: 'Со скидкой', favEmpty: 'Избранное пусто', favEmptyP: 'Нажмите на сердечко у товара, чтобы добавить его сюда', chatEmpty: 'Нет сообщений', chatEmptyP: 'Сообщения о вашем заказе появятся здесь', cartEmpty: 'Корзина пуста', cartEmptyP: 'Добавьте понравившиеся товары в корзину', total: 'Итого', order: 'Оформить заказ', add: 'В корзину', added: 'Добавлено в корзину', faved: 'Добавлено в избранное', unfaved: 'Удалено из избранного', pcs: 'шт.', orders: 'Мои заказы', addresses: 'Мои адреса', likes: 'Избранное', settings: 'Настройки', logout: 'Выйти', width: 'Ширина', height: 'Высота', ordered: 'Заказ принят', tabs: ['Главная', 'Избранное', 'Чат', 'Корзина', 'Профиль'] },
+    en: { City: 'City', Search: 'Search by products', Composition: 'Composition', Size: 'Size', Description: 'Description', Reviews: 'Ratings and reviews', Correspondence: 'Correspondence', PQ: 'Price / quality', Service: 'Shop service', all: 'All', popular: 'Popular gifts', sale: 'On sale', favEmpty: 'No favorites yet', favEmptyP: 'Tap the heart on a product to save it here', chatEmpty: 'No messages', chatEmptyP: 'Messages about your order will show up here', cartEmpty: 'Your cart is empty', cartEmptyP: 'Add the things you like to your cart', total: 'Total', order: 'Place order', add: 'Add to cart', added: 'Added to cart', faved: 'Added to favorites', unfaved: 'Removed from favorites', pcs: 'pcs', orders: 'My orders', addresses: 'My addresses', likes: 'Favorites', settings: 'Settings', logout: 'Log out', width: 'Width', height: 'Height', ordered: 'Order placed', tabs: ['Main', 'Favorite', 'Chat', 'Cart', 'Account'] }
+  };
+
+  // ---------- Sample data (shape follows the API: name[lang], price, discount, shop) ----------
+  const CATS = [
+    { id: 1, icon: 'rose', name: { tm: 'Güller', ru: 'Цветы', en: 'Flowers' }, tint: ['#F7D9DE', '#C94F64'] },
+    { id: 2, icon: 'cake', name: { tm: 'Tortlar', ru: 'Торты', en: 'Cakes' }, tint: ['#F6E6D2', '#B7773A'] },
+    { id: 3, icon: 'gift', name: { tm: 'Sowgatlar', ru: 'Подарки', en: 'Gifts' }, tint: ['#E4E9F4', '#4A62A3'] },
+    { id: 4, icon: 'balloon', name: { tm: 'Şarlar', ru: 'Шары', en: 'Balloons' }, tint: ['#E2F1EA', '#2F8A63'] },
+    { id: 5, icon: 'toy', name: { tm: 'Oýnawaçlar', ru: 'Игрушки', en: 'Toys' }, tint: ['#F2E6F3', '#8E4A95'] },
+    { id: 6, icon: 'perfume', name: { tm: 'Atyrlar', ru: 'Парфюм', en: 'Perfume' }, tint: ['#EEE9E1', '#7A6A52'] },
+    { id: 7, icon: 'choco', name: { tm: 'Şokolad', ru: 'Шоколад', en: 'Chocolate' }, tint: ['#EFE3DB', '#6B3E26'] }
+  ];
+  const BANNERS = [
+    { img: 'assets/banner-2.png', cat: 3, name: { tm: 'Täze ýyl sowgatlary', ru: 'Новогодние подарки', en: 'New Year gifts' } },
+    { img: 'assets/banner-1.png', cat: 1, name: { tm: 'Gül çemenleri', ru: 'Букеты роз', en: 'Rose bouquets' } },
+    { img: 'assets/banner-2.png', cat: 2, name: { tm: 'Doglan gün', ru: 'День рождения', en: 'Birthday' } },
+    { img: 'assets/banner-1.png', cat: 4, name: { tm: '8-nji mart', ru: '8 марта', en: 'March 8' } }
+  ];
+  const P = (id, cat, tm, ru, en, price, discount, shop, photo) => ({ id, cat, name: { tm, ru, en }, price, discount, shop, photo });
+  const PRODUCTS = [
+    P(1, 1, '25 gyzyl gülden çemen', 'Букет из 25 красных роз', 'Bouquet of 25 red roses', 650, 10, 'Gül Bagy', true),
+    P(2, 1, 'Ak we gülgüne pion', 'Белые и розовые пионы', 'White & pink peonies', 480, 0, 'Flora TM', true),
+    P(3, 2, 'Şokoladly tort, 2 kg', 'Шоколадный торт, 2 кг', 'Chocolate cake, 2 kg', 320, 15, 'Süýji Dünýä'),
+    P(4, 3, 'Sowgat gutusy «Premium»', 'Подарочный набор «Премиум»', '“Premium” gift box', 890, 0, 'Sowgat Merkezi'),
+    P(5, 4, '15 sany geliý şary', '15 гелиевых шаров', '15 helium balloons', 210, 20, 'Party Aşgabat'),
+    P(6, 5, 'Uly aýy oýnawajy, 1 m', 'Большой медведь, 1 м', 'Big teddy bear, 1 m', 540, 0, 'Oýnawaç Öýi'),
+    P(7, 6, 'Atyr toplumy, 50 ml', 'Парфюмерный набор, 50 мл', 'Perfume set, 50 ml', 760, 5, 'Aroma TM'),
+    P(8, 7, 'El işi şokolad, 24 sany', 'Шоколад ручной работы, 24 шт.', 'Handmade chocolate, 24 pcs', 180, 0, 'Süýji Dünýä'),
+    P(9, 1, 'Sebetde gül kompozisiýasy', 'Цветочная композиция в корзине', 'Flower basket arrangement', 720, 12, 'Gül Bagy', true),
+    P(10, 2, 'Bento tort «Söýgi»', 'Бенто-торт «Любовь»', '“Love” bento cake', 150, 0, 'Tort Studio')
+  ];
+  const DESC = {
+    tm: 'Täze gülden taýýarlanan çemen, ýörite kagyza dolanýar we lenta bilen bezelýär. Aşgabat şäheriniň çäginde şol gün eltip berilýär.',
+    ru: 'Букет из свежих цветов в дизайнерской упаковке с лентой. Доставка по Ашхабаду в день заказа.',
+    en: 'Fresh flowers wrapped in designer paper and finished with a ribbon. Same-day delivery across Ashgabat.'
+  };
+
+  // ---------- State ----------
+  const state = {
+    lang: 'tm', tab: 'main', cat: 0,
+    fav: new Set([1, 4, 6]),
+    cart: new Map([[1, 1], [3, 1]]),
+    detail: null, img: 0
+  };
+  const t = k => T[state.lang][k];
+  const nm = o => o[state.lang] || o.tm;
+  const final = p => Math.floor(p.price - p.price * p.discount / 100);
+  const byId = id => PRODUCTS.find(p => p.id === id);
+  const catOf = p => CATS.find(c => c.id === p.cat);
+
+  // Product "photo": the app's flower asset for bouquets, otherwise a tinted glyph tile.
+  const art = (p, variant = 0) => {
+    const c = catOf(p);
+    if (p.photo) {
+      const pos = ['center', '30% 40%', '70% 60%'][variant % 3];
+      return `<div class="art" style="background:${c.tint[0]} url(assets/flower.png) ${pos}/cover no-repeat"></div>`;
+    }
+    const angle = [135, 200, 60][variant % 3];
+    return `<div class="art" style="background:linear-gradient(${angle}deg, ${c.tint[0]}, #fff 140%);color:${c.tint[1]};display:grid;place-items:center"><div style="width:44%;opacity:.9">${svg(c.icon)}</div></div>`;
+  };
+
+  const priceHTML = p => p.discount
+    ? `<b>${final(p)} TMT</b><s>${p.price} TMT</s>`
+    : `<b>${p.price} TMT</b>`;
+
+  const card = p => `
+    <div class="card" role="button" tabindex="0" data-open="${p.id}">
+      <div class="img">${art(p)}
+        <button class="fav ${state.fav.has(p.id) ? 'on' : ''}" data-fav="${p.id}" aria-label="Halananlara goş">${svg(state.fav.has(p.id) ? 'heartF' : 'heart')}</button>
+        ${p.discount ? `<span class="badge">-${p.discount}%</span>` : ''}
+      </div>
+      <div class="name">${nm(p.name)}</div>
+      <div class="shop">${p.shop}</div>
+      <div class="price">${priceHTML(p)}</div>
+    </div>`;
+
+  const header = () => `
+    <div class="city">${t('City')}</div>
+    <div class="navrow">
+      <div class="cityname">Aşgabat <span style="width:18px">${svg('down')}</span></div>
+      <div class="navicons">
+        <button aria-label="Bildirişler" style="width:22px">${svg('bell')}<span class="dot">2</span></button>
+        <button aria-label="Sebet" data-tab="cart" style="width:22px">${svg('cartF')}</button>
+      </div>
+    </div>
+    <div class="search">
+      <label><span style="width:18px">${svg('search')}</span><input id="q" type="search" placeholder="${t('Search')}" autocomplete="off"></label>
+      <button class="iconbtn" aria-label="Süzgüç"><span style="width:18px">${svg('settings')}</span></button>
+    </div>`;
+
+  // ---------- Screens ----------
+  const screens = {
+    main() {
+      const list = state.cat ? PRODUCTS.filter(p => p.cat === state.cat) : PRODUCTS;
+      const sale = PRODUCTS.filter(p => p.discount);
+      return header() + `
+        <div class="hscroll cats">
+          <button class="cat ${state.cat === 0 ? 'active' : ''}" data-cat="0"><span class="circle" style="color:var(--text)">${svg('gift')}</span><span>${t('all')}</span></button>
+          ${CATS.map(c => `<button class="cat ${state.cat === c.id ? 'active' : ''}" data-cat="${c.id}"><span class="circle" style="color:${c.tint[1]};background:${state.cat === c.id ? '' : c.tint[0]}">${svg(c.icon)}</span><span>${nm(c.name)}</span></button>`).join('')}
+        </div>
+        <div class="hscroll banners">
+          ${BANNERS.map(b => `<button class="banner" data-cat="${b.cat}" style="background-image:url(${b.img})">${nm(b.name)}</button>`).join('')}
+        </div>
+        <div class="section-head"><h2>${state.cat ? nm(CATS.find(c => c.id === state.cat).name) : t('popular')}</h2></div>
+        <div class="hscroll row" id="mainRow">${list.map(card).join('')}</div>
+        <div class="section-head"><h2>${t('sale')}</h2></div>
+        <div class="hscroll row">${sale.map(card).join('')}</div>
+        <div class="langbar">${['tm', 'ru', 'en'].map(l => `<button data-lang="${l}" aria-pressed="${state.lang === l}">${l.toUpperCase()}</button>`).join('')}</div>`;
+    },
+    favorite() {
+      const items = PRODUCTS.filter(p => state.fav.has(p.id));
+      if (!items.length) return header() + empty('heart', t('favEmpty'), t('favEmptyP'));
+      return header() + `<div class="grid">${items.map(card).join('')}</div>`;
+    },
+    chat() { return header() + empty('chat', t('chatEmpty'), t('chatEmptyP')); },
+    cart() {
+      if (!state.cart.size) return header() + empty('cart', t('cartEmpty'), t('cartEmptyP'));
+      return header() + `<div class="cart-list">${[...state.cart].map(([id, q]) => {
+        const p = byId(id);
+        return `<div class="cart-item">
+          <div class="thumb">${art(p)}</div>
+          <div class="info"><div>${nm(p.name)}</div>
+            <div class="stepper"><button data-dec="${id}" aria-label="Azalt">−</button><span>${q} ${t('pcs')}</span><button data-inc="${id}" aria-label="Köpelt">+</button></div>
+          </div>
+          <div class="sum">${final(p) * q} TMT</div>
+        </div>`;
+      }).join('')}</div>`;
+    },
+    account() {
+      return `<div class="acc">
+        <div class="acc-head"><div class="avatar">${svg('personF')}</div><b>Aýna Meredowa</b><span>+993 65 12 34 56</span></div>
+        <div class="menu">
+          ${[['receipt', 'orders'], ['pin', 'addresses'], ['heart', 'likes'], ['settings', 'settings']].map(([ic, k]) =>
+            `<button ${k === 'likes' ? 'data-tab="favorite"' : ''}><span style="width:20px;flex:none">${svg(ic)}</span><span>${t(k)}</span><span class="chev" style="width:18px;flex:none">${svg('fwd')}</span></button>`).join('')}
+        </div>
+        <button class="btn secondary">${t('logout')}</button>
+      </div>`;
+    }
+  };
+  const empty = (ic, h, p) => `<div class="empty" style="height:auto;padding-top:80px">${svg(ic)}<h3>${h}</h3><p>${p}</p></div>`;
+
+  // ---------- Detail ----------
+  const stars = n => `<span class="stars">${[1, 2, 3, 4, 5].map(i => `<span class="${i > n ? 'off' : ''}">${svg('star')}</span>`).join('')}</span>`;
+  function renderDetail() {
+    const p = byId(state.detail);
+    if (!p) return;
+    const on = state.fav.has(p.id);
+    $('#detailBody').innerHTML = `
+      <div class="hero">${art(p, state.img)}
+        <button class="back" data-close aria-label="Yza"><span style="width:22px">${svg('back')}</span></button>
+        <button class="fav-lg ${on ? 'on' : ''}" data-fav="${p.id}" aria-label="Halananlara goş"><span style="width:22px">${svg(on ? 'heartF' : 'heart')}</span></button>
+      </div>
+      <div class="hscroll thumbs">${[0, 1, 2].map(i => `<button class="${i === state.img ? 'active' : ''}" data-img="${i}" aria-label="Surat ${i + 1}">${art(p, i)}</button>`).join('')}</div>
+      <div class="pd">
+        <h1>${nm(p.name)}</h1>
+        <div class="shopline">${p.shop}</div>
+        <div class="rating">${svg('star')}<span>4.9</span></div>
+        <hr>
+        <h2>${t('Composition')}</h2>
+        <p>${nm(catOf(p).name)}, lenta, dizaýn kagyzy</p>
+        <h2>${t('Size')}</h2>
+        <div class="sizes"><span>${svg('width')}${t('width')} 30 cm</span><span>${svg('height')}${t('height')} 45 cm</span></div>
+        <h2>${t('Description')}</h2>
+        <p>${nm(DESC)}</p>
+        <h2>${t('Reviews')}</h2>
+        <div class="review"><div class="ava">${p.shop[0]}</div><div><b>${p.shop}</b><small>13:56</small></div></div>
+        <div class="stars-row"><span>${t('Correspondence')}</span>${stars(4)}</div>
+        <div class="stars-row"><span>${t('PQ')}</span>${stars(4)}</div>
+        <div class="stars-row"><span>${t('Service')}</span>${stars(2)}</div>
+        <div class="comment">Спасибо большое магазину, пришло все быстро, качественно!</div>
+      </div>`;
+    $('#buybar').innerHTML = `<div class="p">${p.discount ? `<s>${p.price} TMT</s>` : ''}<b>${final(p)} TMT</b></div><button class="btn" data-add="${p.id}">${t('add')}</button>`;
+  }
+
+  // ---------- Render ----------
+  const $ = s => document.querySelector(s);
+  const TABS = [['main', 'home'], ['favorite', 'heart'], ['chat', 'chat'], ['cart', 'cart'], ['account', 'person']];
+  function render(keepScroll) {
+    const view = $('#view');
+    const top = view.scrollTop;
+    const row = document.getElementById('mainRow');
+    const rowLeft = row ? row.scrollLeft : 0;
+
+    view.innerHTML = screens[state.tab]();
+    if (keepScroll) { view.scrollTop = top; const r = document.getElementById('mainRow'); if (r) r.scrollLeft = rowLeft; }
+
+    const count = [...state.cart.values()].reduce((a, b) => a + b, 0);
+    $('#tabbar').innerHTML = TABS.map(([k, ic], i) => {
+      const a = state.tab === k;
+      return `<button class="${a ? 'active' : ''}" data-tab="${k}" aria-current="${a}">${svg(a ? ic + 'F' : ic)}<span>${t('tabs')[i]}</span>${k === 'cart' && count ? `<span class="dot">${count}</span>` : ''}</button>`;
+    }).join('');
+
+    // Cart footer lives outside the scroll area
+    document.querySelector('.cart-foot')?.remove();
+    if (state.tab === 'cart' && state.cart.size) {
+      const total = [...state.cart].reduce((s, [id, q]) => s + final(byId(id)) * q, 0);
+      view.insertAdjacentHTML('afterend', `<div class="cart-foot"><div class="tot"><span>${t('total')}</span><b>${total} TMT</b></div><button class="btn" data-checkout>${t('order')}</button></div>`);
+    }
+
+    if (state.detail) renderDetail();
+    document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === state.lang));
+    document.querySelectorAll('#jump [data-go]').forEach(b => b.setAttribute('aria-pressed', state.detail ? b.dataset.go === 'detail' : b.dataset.go === state.tab));
+    $('#sys').innerHTML = svg('signal') + svg('battery');
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const el = $('#toast');
+    el.textContent = msg; el.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+  }
+  function openDetail(id) {
+    state.detail = id; state.img = 0; renderDetail();
+    $('#detail').classList.add('open'); $('#detail').setAttribute('aria-hidden', 'false');
+    $('#detailBody').scrollTop = 0; render(true);
+  }
+  function closeDetail() {
+    state.detail = null;
+    $('#detail').classList.remove('open'); $('#detail').setAttribute('aria-hidden', 'true');
+    render(true);
+  }
+
+  document.addEventListener('click', e => {
+    const el = e.target.closest('button, [data-open]');
+    if (!el) return;
+    const d = el.dataset;
+    if (d.fav) {
+      e.stopPropagation();
+      const id = +d.fav;
+      state.fav.has(id) ? (state.fav.delete(id), toast(t('unfaved'))) : (state.fav.add(id), toast(t('faved')));
+      return render(true);
+    }
+    if (d.open) return openDetail(+d.open);
+    if (d.cat !== undefined) { state.cat = +d.cat; state.tab = 'main'; return render(true); }
+    if (d.tab) { if (state.detail) closeDetail(); state.tab = d.tab; $('#view').scrollTop = 0; return render(); }
+    if (d.lang) { state.lang = d.lang; return render(true); }
+    if (d.close !== undefined) return closeDetail();
+    if (d.img) { state.img = +d.img; return renderDetail(); }
+    if (d.add) { const id = +d.add; state.cart.set(id, (state.cart.get(id) || 0) + 1); toast(t('added')); return render(true); }
+    if (d.inc) { const id = +d.inc; state.cart.set(id, state.cart.get(id) + 1); return render(true); }
+    if (d.dec) { const id = +d.dec, q = state.cart.get(id) - 1; q ? state.cart.set(id, q) : state.cart.delete(id); return render(true); }
+    if (d.checkout !== undefined) { state.cart.clear(); toast(t('ordered')); return render(); }
+    if (d.go) {
+      if (d.go === 'detail') { state.tab = 'main'; render(); return openDetail(state.detail || 1); }
+      if (state.detail) closeDetail();
+      state.tab = d.go; $('#view').scrollTop = 0; return render();
+    }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.dataset?.open) openDetail(+e.target.dataset.open);
+    if (e.key === 'Escape' && state.detail) closeDetail();
+  });
+  document.addEventListener('input', e => {
+    if (e.target.id !== 'q') return;
+    const q = e.target.value.trim().toLowerCase();
+    const row = document.getElementById('mainRow');
+    if (!row) return;
+    const base = state.cat ? PRODUCTS.filter(p => p.cat === state.cat) : PRODUCTS;
+    const hits = base.filter(p => !q || Object.values(p.name).some(n => n.toLowerCase().includes(q)) || p.shop.toLowerCase().includes(q));
+    row.innerHTML = hits.length ? hits.map(card).join('') : `<div style="padding:24px 0;color:var(--text-muted)">—</div>`;
+  });
+
+  render();
+})();
+</script>
