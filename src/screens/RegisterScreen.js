@@ -6,6 +6,7 @@ import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 import { apiRequest } from '../config/api'
 import { useAuth } from '../context/AuthContext'
+import { useTranslation } from 'react-i18next'
 import { colors, spacing, typography } from '../theme'
 
 const RegisterScreen = () => {
@@ -16,10 +17,11 @@ const RegisterScreen = () => {
     const [isLoading, setIsLoading] = useState(false)
     const navigation = useNavigation()
     const { login } = useAuth()
+    const { t } = useTranslation()
 
     const onRegisterPressed = async () => {
         if (!name.trim() || !phoneNumber.trim()) {
-            setError('Ady we telefon belgiňizi giriziň');
+            setError(t('register.required'));
             return;
         }
 
@@ -39,10 +41,10 @@ const RegisterScreen = () => {
             if (data.success) {
                 await login(data.access_token, data.user);
             } else {
-                setError(data.message || 'Hasap döredip bolmady');
+                setError(data.message || t('register.failed'));
             }
         } catch (e) {
-            setError(e.message || 'Näsazlyk ýüze çykdy. Gaýtadan synanyşyň.');
+            setError(e.message || t('common.genericError'));
         } finally {
             setIsLoading(false);
         }
@@ -51,12 +53,12 @@ const RegisterScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-                <Text style={styles.title}>Hasap dörediň</Text>
-                <Text style={styles.subtitle}>Sowgatly-dan alyş-çalyş etmek üçin maglumatlaryňyzy giriziň</Text>
+                <Text style={styles.title}>{t('register.title')}</Text>
+                <Text style={styles.subtitle}>{t('register.subtitle')}</Text>
 
                 <CustomInput
-                    placeholder="Adyňyz"
-                    label="Ady we familiýaňyz"
+                    placeholder={t('register.namePlaceholder')}
+                    label={t('register.nameLabel')}
                     value={name}
                     setValue={(v) => { setName(v); setError(''); }}
                     autoCapitalize="words"
@@ -64,15 +66,15 @@ const RegisterScreen = () => {
 
                 <CustomInput
                     placeholder="65656585"
-                    label="Telefon belgisi"
+                    label={t('common.phone')}
                     value={phoneNumber}
                     setValue={(v) => { setPhoneNumber(v); setError(''); }}
                     keyboardType="phone-pad"
                 />
 
                 <CustomInput
-                    placeholder="email@sowgatly.tm (islege görä)"
-                    label="E-poçta"
+                    placeholder={`email@sowgatly.tm (${t('common.optional')})`}
+                    label={t('register.email')}
                     value={email}
                     setValue={setEmail}
                     keyboardType="email-address"
@@ -81,13 +83,13 @@ const RegisterScreen = () => {
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                 <CustomButton
-                    text="Hasaby dörediň"
+                    text={t('register.submit')}
                     onPress={onRegisterPressed}
                     loading={isLoading}
                 />
 
                 <CustomButton
-                    text="Hasabyňyz bar bolsa, giriň"
+                    text={t('register.haveAccount')}
                     type="TERTIARY"
                     onPress={() => navigation.navigate('LoginScreen')}
                 />

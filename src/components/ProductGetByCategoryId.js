@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Platform, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Platform, View, Text, ScrollView } from 'react-native';
 import Products from './Products';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../config/api';
+import { localize } from '../utils/localize';
 import { colors, radius } from '../theme';
 
 const SKELETON_ARRAY = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -14,14 +14,14 @@ const LoadingSkeleton = () => (
             <View key={`category-${index}`}>
                 <View style={styles.headerTextSuspend} />
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <TouchableOpacity style={styles.productFlexRowSuspend}>
+                    <View style={styles.productFlexRowSuspend}>
                         {SKELETON_ARRAY.map((innerItem, innerIndex) => (
                             <View 
                                 key={`product-${index}-${innerIndex}`} 
                                 style={styles.productSuspend}
                             /> 
                         ))}
-                    </TouchableOpacity>
+                    </View>
                 </ScrollView>
             </View>
         ))}
@@ -49,41 +49,33 @@ const ProductGetByCategoryId = () => {
         getCategories();
     }, []);
 
-    const renderItem = ({ item }) => (
-        <View style={styles.categoryContainer}>
-            <Text style={styles.headerText}>{item.name?.[i18n.language] || item.name?.tm}</Text>
-            <Products category_id={item.id}/>
-        </View>
-    );
 
     if (isLoading) {
         return <LoadingSkeleton />;
     }
 
+    // Rendered with map: this sits inside Main's ScrollView, and a nested
+    // vertical FlatList there breaks virtualization and logs a warning.
     return (
-        <SafeAreaView style={styles.container}>
-            <View>
-                <FlatList
-                    data={categories}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
-                    style={styles.contentContainer}
-                    alwaysBounceVertical
-                />
-            </View>
-        </SafeAreaView>
+        <View style={styles.container}>
+            {categories.map((item) => (
+                <View key={item.id}>
+                    <Text style={styles.headerText}>{localize(item, 'name', i18n.language)}</Text>
+                    <Products category_id={item.id}/>
+                </View>
+            ))}
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        marginTop:20,
-        padding:2,
+        marginTop: 12,
+        paddingBottom: 16,
         backgroundColor: '#fff'
     },
     headerText: {
         fontWeight: '700',
-        fontFamily: 'Inter',
         fontSize: 16,
         marginVertical: 10,
         marginHorizontal: 10

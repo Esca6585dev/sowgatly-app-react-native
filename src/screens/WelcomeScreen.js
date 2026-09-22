@@ -3,24 +3,36 @@ import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Logo from '../../assets/img/logo/logo-white-2.png'
+import { useTranslation } from 'react-i18next'
 import CustomButton from '../components/CustomButton'
+import ChangeLanguage from './ChangeLanguage'
 import { colors, spacing, typography } from '../theme'
 
 const WelcomeScreen = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Image source={Logo} style={styles.logo} resizeMode="contain" />
         <Text style={styles.title}>Sowgatly</Text>
-        <Text style={styles.subtitle}>Iň gowy sowgatlary saýlaň we öýüňize eltip beriň</Text>
+        <Text style={styles.subtitle}>{t('welcome.subtitle')}</Text>
       </View>
 
       <View style={styles.actions}>
-        <CustomButton text="Başla" onPress={() => navigation.navigate('LoginScreen')} />
+        <View style={styles.language}>
+          <ChangeLanguage inverse />
+        </View>
         <CustomButton
-          text="Täze hasap dörediň"
+          text={t('welcome.start')}
+          onPress={() => navigation.navigate('LoginScreen')}
+          bgColor={colors.background}
+          fgColor={colors.text}
+        />
+        <CustomButton
+          text={t('welcome.createAccount')}
+          fgColor={colors.textInverse}
           type="TERTIARY"
           onPress={() => navigation.navigate('RegisterScreen')}
         />
@@ -64,5 +76,8 @@ const styles = StyleSheet.create({
   },
   actions: {
     paddingBottom: spacing.lg,
+  },
+  language: {
+    marginBottom: spacing.lg,
   },
 })

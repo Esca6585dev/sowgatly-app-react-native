@@ -1,6 +1,4 @@
 {
-  "greeting": "Salam",
-  "farewell": "Hoş",
   "City": "Şäher",
   "Search by products": "Önüm boýunça gözläň",
   "Composition": "Kompozisiýa",
@@ -9,5 +7,143 @@
   "Ratings and reviews": "Reýtingler we synlar",
   "Correspondence": "Hat alyşmalar",
   "Price / quality": "Bahasy / hili",
-  "Shop service": "Dükan hyzmaty"
+  "Shop service": "Dükan hyzmaty",
+  "common": {
+    "currency": "TMT",
+    "pcs": "sany",
+    "items": "{{count}} haryt",
+    "error": "Ýalňyşlyk",
+    "genericError": "Näsazlyk ýüze çykdy. Gaýtadan synanyşyň.",
+    "product": "Önüm",
+    "user": "Ulanyjy",
+    "phone": "Telefon belgisi",
+    "optional": "islege görä",
+    "cityAshgabat": "Aşgabat"
+  },
+  "tabs": {
+    "Main": "Esasy",
+    "Favorite": "Halanan",
+    "Chat": "Çat",
+    "Cart": "Sebet",
+    "Account": "Hasap"
+  },
+  "welcome": {
+    "subtitle": "Iň gowy sowgatlary saýlaň we öýüňize eltip beriň",
+    "start": "Başla",
+    "createAccount": "Täze hasap dörediň"
+  },
+  "login": {
+    "title": "Hoş geldiňiz",
+    "subtitle": "Dowam etmek üçin telefon belgiňizi giriziň",
+    "getCode": "Kody al",
+    "noAccount": "Hasabyň ýok bolsa, döret",
+    "phoneRequired": "Telefon belgiňizi giriziň",
+    "notFound": "Bu belgi bilen hasap tapylmady"
+  },
+  "otp": {
+    "title": "Kody giriziň",
+    "subtitle": "{{phone}} belgä iberilen kody giriziň",
+    "label": "Tassyklama kody",
+    "submit": "Girmek",
+    "changeNumber": "Belgini üýtget",
+    "invalidLength": "4 sanly kody giriziň",
+    "invalid": "Kod nädogry"
+  },
+  "register": {
+    "title": "Hasap dörediň",
+    "subtitle": "Sowgatly-dan alyş-çalyş etmek üçin maglumatlaryňyzy giriziň",
+    "nameLabel": "Ady we familiýaňyz",
+    "namePlaceholder": "Adyňyz",
+    "email": "E-poçta",
+    "submit": "Hasaby dörediň",
+    "haveAccount": "Hasabyňyz bar bolsa, giriň",
+    "required": "Ady we telefon belgiňizi giriziň",
+    "failed": "Hasap döredip bolmady"
+  },
+  "product": {
+    "addToCart": "Sebede goş",
+    "addedTitle": "Sebede goşuldy",
+    "addedMessage": "{{name}} sebede goşuldy.",
+    "addFailed": "Sebede goşup bolmady.",
+    "width": "Ini",
+    "height": "Beýikligi",
+    "shop": "Dükan",
+    "outOfStock": "Ammarda ýok"
+  },
+  "collection": {
+    "title": "Kolleksiýa",
+    "empty": "Bu toparda önüm ýok"
+  },
+  "favorites": {
+    "emptyTitle": "Halananlar boş",
+    "emptySubtitle": "Önümleriň ýanyndaky ýürejige basyp, halan zatlaryňyzy şu ýere goşuň"
+  },
+  "chat": {
+    "emptyTitle": "Habarlaşma ýok",
+    "emptySubtitle": "Sargydyňyz baradaky habarlar şu ýerde görkeziler"
+  },
+  "cart": {
+    "emptyTitle": "Sebediňiz boş",
+    "emptySubtitle": "Halan zatlaryňyzy sebede goşuň",
+    "total": "Jemi",
+    "order": "Sargyt beriň"
+  },
+  "checkout": {
+    "title": "Sargyty resmileşdirmek",
+    "recipientPhone": "Eltip beriljek adamyň telefony",
+    "deliveryTime": "Eltip bermek wagty",
+    "asap": "Häzir eltip beriň",
+    "scheduled": "Wagt saýlaň",
+    "today": "Şu gün",
+    "tomorrow": "Ertir",
+    "weekdays": [
+      "Ýekşenbe",
+      "Duşenbe",
+      "Sişenbe",
+      "Çarşenbe",
+      "Penşenbe",
+      "Anna",
+      "Şenbe"
+    ],
+    "noSlots": "Şu güne wagt galmady, başga gün saýlaň",
+    "note": "Bellik (islege görä)",
+    "notePlaceholder": "Mysal: gapydaky jaň işlänok",
+    "submit": "Sargyty tassyklaň",
+    "phoneRequired": "Eltip beriljek adamyň telefon belgisini giriziň",
+    "slotRequired": "Eltip bermek wagtyny saýlaň",
+    "failed": "Sargyt döredip bolmady"
+  },
+  "orderSuccess": {
+    "title": "Sargydyňyz kabul edildi!",
+    "number": "Sargyt belgisi: #{{id}}",
+    "created": "Sargydyňyz üstünlikli döredildi",
+    "totalPaid": "Jemi töleg",
+    "home": "Baş sahypa"
+  },
+  "orders": {
+    "title": "Sargytlarym",
+    "empty": "Sargydyňyz ýok",
+    "order": "Sargyt #{{id}}",
+    "status": {
+      "pending": "Garaşylýar",
+      "processing": "Taýýarlanýar",
+      "completed": "Tamamlandy",
+      "cancelled": "Ýatyryldy"
+    }
+  },
+  "account": {
+    "orders": "Sargytlarym",
+    "addresses": "Salgylarym",
+    "favorites": "Halananlarym",
+    "settings": "Sazlamalar",
+    "logout": "Ulgamdan çyk"
+  },
+  "settings": {
+    "title": "Sazlamalar",
+    "language": "Dil"
+  },
+  "notifications": {
+    "title": "Bildirişler",
+    "empty": "Bildiriş ýok"
+  }
 }

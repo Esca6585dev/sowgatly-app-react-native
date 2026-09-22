@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import Logo from '../../assets/img/logo/logo-white-2.png'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
+import { useTranslation } from 'react-i18next'
 import { apiRequest } from '../config/api'
 import { colors, spacing, typography } from '../theme'
 
@@ -13,10 +14,11 @@ const LoginScreen = () => {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const navigation = useNavigation();
+    const { t } = useTranslation();
 
     const onOTPGeneratePressed = async () => {
         if (!phoneNumber.trim()) {
-            setError('Telefon belgiňizi giriziň');
+            setError(t('login.phoneRequired'));
             return;
         }
 
@@ -32,10 +34,10 @@ const LoginScreen = () => {
             if (data.success) {
                 navigation.navigate('OTPScreen', { phoneNumber });
             } else {
-                setError(data.message || 'Bu belgi bilen hasap tapylmady');
+                setError(data.message || t('login.notFound'));
             }
         } catch (e) {
-            setError(e.message || 'Näsazlyk ýüze çykdy. Gaýtadan synanyşyň.');
+            setError(e.message || t('common.genericError'));
         } finally {
             setIsLoading(false);
         }
@@ -45,12 +47,12 @@ const LoginScreen = () => {
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scroll}>
                 <Image source={Logo} style={styles.logo} resizeMode="contain" />
-                <Text style={styles.title}>Hoş geldiňiz</Text>
-                <Text style={styles.subtitle}>Dowam etmek üçin telefon belgiňizi giriziň</Text>
+                <Text style={styles.title}>{t('login.title')}</Text>
+                <Text style={styles.subtitle}>{t('login.subtitle')}</Text>
 
                 <CustomInput
                     placeholder="65656585"
-                    label="Telefon belgisi"
+                    label={t('common.phone')}
                     value={phoneNumber}
                     setValue={(v) => { setPhoneNumber(v); setError(''); }}
                     keyboardType="phone-pad"
@@ -58,13 +60,13 @@ const LoginScreen = () => {
                 />
 
                 <CustomButton
-                    text="Kody al"
+                    text={t('login.getCode')}
                     onPress={onOTPGeneratePressed}
                     loading={isLoading}
                 />
 
                 <CustomButton
-                    text="Hasabyň ýok bolsa, döret"
+                    text={t('login.noAccount')}
                     type="TERTIARY"
                     onPress={() => navigation.navigate('RegisterScreen')}
                 />

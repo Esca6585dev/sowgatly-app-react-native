@@ -3,9 +3,11 @@ import { View, Text, FlatList, StyleSheet, ActivityIndicator, Dimensions, Toucha
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../config/api';
 import ProductCard from '../components/ProductCard';
 import { useFavorites } from '../context/FavoritesContext';
+import { localize } from '../utils/localize';
 import { colors, spacing, typography } from '../theme';
 
 const GAP = spacing.md;
@@ -15,7 +17,9 @@ const CARD_WIDTH = (Dimensions.get('window').width - SCREEN_PADDING * 2 - GAP) /
 const CollectionScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const { categoryId, title } = route.params || {};
+    const { categoryId, category, title } = route.params || {};
+    const { t, i18n } = useTranslation();
+    const heading = (category && localize(category, 'name', i18n.language)) || title || t('collection.title');
 
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -44,7 +48,7 @@ const CollectionScreen = () => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Ionicons name="chevron-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.title} numberOfLines={1}>{title || 'Kolleksiýa'}</Text>
+                <Text style={styles.title} numberOfLines={1}>{heading}</Text>
                 <View style={styles.backButton} />
             </View>
 
@@ -55,7 +59,7 @@ const CollectionScreen = () => {
             ) : data.length === 0 ? (
                 <View style={styles.center}>
                     <Ionicons name="pricetags-outline" size={48} color={colors.textMuted} />
-                    <Text style={styles.emptyText}>Bu toparda önüm ýok</Text>
+                    <Text style={styles.emptyText}>{t('collection.empty')}</Text>
                 </View>
             ) : (
                 <FlatList

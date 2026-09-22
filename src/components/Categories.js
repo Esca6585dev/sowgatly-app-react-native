@@ -3,6 +3,7 @@ import { Image, ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'rea
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { apiRequest } from '../config/api';
+import { localize } from '../utils/localize';
 import { colors, radius, spacing, typography } from '../theme';
 
 const SKELETON_COUNT = [1, 2, 3, 4, 5, 6];
@@ -49,7 +50,7 @@ const Categories = () => {
                 <TouchableOpacity
                     key={category.id}
                     style={styles.item}
-                    onPress={() => navigation.navigate('Collection', { categoryId: category.id, title: category.name?.[i18n.language] })}
+                    onPress={() => navigation.navigate('Collection', { categoryId: category.id, category })}
                 >
                     <View style={styles.iconCircle}>
                         <Image
@@ -59,7 +60,7 @@ const Categories = () => {
                         />
                     </View>
                     <Text style={styles.label} numberOfLines={1}>
-                        {category.name?.[i18n.language] || category.name?.tm}
+                        {localize(category, 'name', i18n.language)}
                     </Text>
                 </TouchableOpacity>
             ))}

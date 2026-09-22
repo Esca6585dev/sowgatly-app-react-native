@@ -3,7 +3,6 @@ import * as React from 'react';
 import Categories from './Categories';
 import Banners from './Banners';
 import ProductGetByCategoryId from './ProductGetByCategoryId';
-import ChangeLanguage from '../screens/ChangeLanguage';
 
 const Main = () => {
   return (
@@ -14,8 +13,6 @@ const Main = () => {
         <Banners />
 
         <ProductGetByCategoryId />
-        
-        <ChangeLanguage />
 
       </ScrollView>
     </View>

@@ -3,13 +3,12 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import { colors, radius, spacing, typography } from '../theme';
-
-const WEEKDAYS = ['Ýekşenbe', 'Duşenbe', 'Sişenbe', 'Çarşenbe', 'Penşenbe', 'Anna', 'Şenbe'];
 
 const TIME_SLOTS = [
   { label: '09:00 - 11:00', startHour: 9 },
@@ -25,22 +24,24 @@ const buildDayOptions = () => {
   return [0, 1, 2].map((offset) => {
     const date = new Date(now);
     date.setDate(date.getDate() + offset);
-    let label;
-    if (offset === 0) label = 'Şu gün';
-    else if (offset === 1) label = 'Ertir';
-    else label = WEEKDAYS[date.getDay()];
-    return { date, label, isToday: offset === 0 };
+    return { date, offset, isToday: offset === 0 };
   });
+};
+
+const dayLabel = (day, t) => {
+  if (day.offset === 0) return t('checkout.today');
+  if (day.offset === 1) return t('checkout.tomorrow');
+  return t('checkout.weekdays', { returnObjects: true })[day.date.getDay()];
 };
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { items = [], total = 0 } = route.params || {};
 
   const dayOptions = useMemo(() => buildDayOptions(), []);
-  const now = new Date();
 
   const [recipientPhone, setRecipientPhone] = useState(user?.phone_number || '');
   const [deliveryType, setDeliveryType] = useState('asap');
@@ -53,16 +54,17 @@ const CheckoutScreen = () => {
   const availableSlots = useMemo(() => {
     const day = dayOptions[selectedDayIndex];
     if (!day.isToday) return TIME_SLOTS;
-    return TIME_SLOTS.filter((slot) => slot.startHour > now.getHours());
+    const currentHour = new Date().getHours();
+    return TIME_SLOTS.filter((slot) => slot.startHour > currentHour);
   }, [selectedDayIndex]);
 
   const onSubmit = async () => {
     if (!recipientPhone.trim()) {
-      setError('Eltip beriljek adamyň telefon belgisini giriziň');
+      setError(t('checkout.phoneRequired'));
       return;
     }
     if (deliveryType === 'scheduled' && !selectedSlot) {
-      setError('Eltip bermek wagtyny saýlaň');
+      setError(t('checkout.slotRequired'));
       return;
     }
 
@@ -90,10 +92,10 @@ const CheckoutScreen = () => {
       if (data.success) {
         navigation.navigate('OrderSuccess', { order: data.order });
       } else {
-        setError(data.message || 'Sargyt döredip bolmady');
+        setError(data.message || t('checkout.failed'));
       }
     } catch (e) {
-      setError(e.message || 'Näsazlyk ýüze çykdy. Gaýtadan synanyşyň.');
+      setError(e.message || t('common.genericError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -105,32 +107,32 @@ const CheckoutScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={styles.title}>Sargyty resmileşdirmek</Text>
+        <Text style={styles.title}>{t('checkout.title')}</Text>
         <View style={styles.backButton} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryLabel}>{items.length} haryt</Text>
+          <Text style={styles.summaryLabel}>{t('common.items', { count: items.length })}</Text>
           <Text style={styles.summaryTotal}>{Math.floor(total)} TMT</Text>
         </View>
 
         <CustomInput
-          label="Eltip beriljek adamyň telefony"
+          label={t('checkout.recipientPhone')}
           placeholder="65656585"
           value={recipientPhone}
           setValue={(v) => { setRecipientPhone(v); setError(''); }}
           keyboardType="phone-pad"
         />
 
-        <Text style={styles.sectionTitle}>Eltip bermek wagty</Text>
+        <Text style={styles.sectionTitle}>{t('checkout.deliveryTime')}</Text>
         <View style={styles.typeRow}>
           <TouchableOpacity
             style={[styles.typeChip, deliveryType === 'asap' && styles.typeChipActive]}
             onPress={() => { setDeliveryType('asap'); setError(''); }}
           >
             <Text style={[styles.typeChipText, deliveryType === 'asap' && styles.typeChipTextActive]}>
-              Häzir eltip beriň
+              {t('checkout.asap')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -138,7 +140,7 @@ const CheckoutScreen = () => {
             onPress={() => { setDeliveryType('scheduled'); setError(''); }}
           >
             <Text style={[styles.typeChipText, deliveryType === 'scheduled' && styles.typeChipTextActive]}>
-              Wagt saýlaň
+              {t('checkout.scheduled')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -153,7 +155,7 @@ const CheckoutScreen = () => {
                   onPress={() => { setSelectedDayIndex(index); setSelectedSlot(null); }}
                 >
                   <Text style={[styles.dayChipText, selectedDayIndex === index && styles.dayChipTextActive]}>
-                    {day.label}
+                    {dayLabel(day, t)}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -161,7 +163,7 @@ const CheckoutScreen = () => {
 
             <View style={styles.slotGrid}>
               {availableSlots.length === 0 ? (
-                <Text style={styles.noSlotsText}>Şu güne wagt galmady, başga gün saýlaň</Text>
+                <Text style={styles.noSlotsText}>{t('checkout.noSlots')}</Text>
               ) : (
                 availableSlots.map((slot) => (
                   <TouchableOpacity
@@ -180,15 +182,15 @@ const CheckoutScreen = () => {
         )}
 
         <CustomInput
-          label="Bellik (islege görä)"
-          placeholder="Mysal: gapydaky jaň işlänok"
+          label={t('checkout.note')}
+          placeholder={t('checkout.notePlaceholder')}
           value={note}
           setValue={setNote}
         />
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-        <CustomButton text="Sargyty tassyklaň" onPress={onSubmit} loading={isSubmitting} />
+        <CustomButton text={t('checkout.submit')} onPress={onSubmit} loading={isSubmitting} />
       </ScrollView>
     </SafeAreaView>
   );

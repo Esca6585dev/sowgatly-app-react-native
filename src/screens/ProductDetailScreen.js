@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import HorizontalRule from '../components/HorizontalRule'
 import BottomButton from '../components/BottomButton'
@@ -7,174 +8,139 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { API_URL } from '../config/api'
 import { useFavorites } from '../context/FavoritesContext'
-import { colors } from '../theme'
-import starIcon from '../../assets/star.png'
-import starIconDefault from '../../assets/star-default.png'
-import arrow1 from '../../assets/Arrow1.png'
-import arrow2 from '../../assets/Arrow2.png'
+import { localize, discountedPrice } from '../utils/localize'
+import { colors, radius, spacing, typography } from '../theme'
 
-const ProductDetailScreen = ({ route }) => {  
+const ProductDetailScreen = ({ route }) => {
   const { data } = route.params
-  const images = data.images
+  const images = data.images || []
   const [imageID, changeImage] = useState(0)
   const { t, i18n } = useTranslation()
   const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
   const { isFavorite, toggleFavorite } = useFavorites()
 
+  const lang = i18n.language
+  const name = localize(data, 'name', lang)
+  const description = localize(data, 'description', lang)
+  const compositions = (data.compositions || [])
+    .map((c) => localize(c, 'name', lang))
+    .filter(Boolean)
+  const width = data.width || data.attributes?.width
+  const height = data.height || data.attributes?.height
+  const favorite = isFavorite(data.id)
+  const mainImageUrl = images[imageID]?.url
+
   return (
-    <View style={styles.container} >
+    <SafeAreaView edges={['left', 'right', 'bottom']} style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.headerImageSection}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={[styles.headerButton, styles.headerBackIcon, { top: insets.top + spacing.sm }]}
+          >
+            <Ionicons name="chevron-back" size={22} color={colors.text} />
+          </TouchableOpacity>
 
-      <View style={styles.headerImageSection}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.headerBackIcon}
-        >
-          <Ionicons
-            name='chevron-back'
-            size={24}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => toggleFavorite(data)}
+            style={[styles.headerButton, styles.headerFavoriteIcon, { top: insets.top + spacing.sm }]}
+          >
+            <Ionicons
+              name={favorite ? 'heart' : 'heart-outline'}
+              size={22}
+              color={favorite ? colors.danger : colors.text}
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => toggleFavorite(data)}
-          style={styles.headerFavoriteIcon}
-        >
-          <Ionicons
-            name={isFavorite(data.id) ? 'heart' : 'heart-outline'}
-            size={22}
-            color={isFavorite(data.id) ? colors.danger : colors.text}
-          />
-        </TouchableOpacity>
-
-        <Image
-          style={styles.mainImage}
-          source={{ uri: `${API_URL}/${data.images[imageID]?.url}` }}
-        />
-      </View>
-      
-      {images && images.length > 0 && (
-        <ScrollView style={styles.containerImage} horizontal={true} showsHorizontalScrollIndicator={false} >
-        {images.map((item, index) => (
-          <View style={styles.selectImage}>
-            <TouchableOpacity
-              onPress={() => changeImage(index)}
-            >
-              <Image
-                key={index}
-                style={[styles.image, (index == imageID) ? styles.active : '' ]}
-                source={{ uri: `${API_URL}/${item.url}` }}
-              />
-            </TouchableOpacity>
-          </View>
-          ))}
-        </ScrollView>
-      )}
-      
-      <View style={styles.productDetails}>
-        <Text style={styles.productName}>{data.name?.[i18n.language] || data.name?.tm}</Text>
-        
-        <View style={styles.starContainer}>
-          <Image style={styles.iconStar} source={starIcon} />
-          <Text style={styles.numberStar}>4.9</Text>
+          {mainImageUrl ? (
+            <Image style={styles.mainImage} source={{ uri: `${API_URL}/${mainImageUrl}` }} />
+          ) : (
+            <View style={[styles.mainImage, styles.imagePlaceholder]}>
+              <Ionicons name="gift-outline" size={64} color={colors.textMuted} />
+            </View>
+          )}
         </View>
 
-        <HorizontalRule />
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionName}>{t('Composition')}</Text>
-          <Text style={styles.numberStar}>4.9</Text>
-        </View>
+        {images.length > 1 && (
+          <ScrollView style={styles.containerImage} horizontal showsHorizontalScrollIndicator={false}>
+            {images.map((item, index) => (
+              <TouchableOpacity key={item.id ?? index} style={styles.selectImage} onPress={() => changeImage(index)}>
+                <Image
+                  style={[styles.image, index === imageID && styles.active]}
+                  source={{ uri: `${API_URL}/${item.url}` }}
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionName}>{t('Size')}</Text>
+        <View style={styles.productDetails}>
+          <Text style={styles.productName}>{name}</Text>
 
-          <View style={styles.sectionRow}>
-            <View style={styles.sectionRowRL}>
-              <Image style={styles.iconArrow1} source={arrow1} />
-
-              <Text style={styles.sectionText}>Ширина 30 см</Text>
-            </View>
-
-            <View style={styles.sectionRowRL}>
-              <Image style={styles.iconArrow2} source={arrow2} />
-
-              <Text style={styles.sectionText}>Ширина 30 см</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionName}>{t('Description')}</Text>
-          <Text style={styles.sectionDescription}>{data.description?.[i18n.language] || data.description?.tm}</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionName}>{t('Ratings and reviews')}</Text>
-          
-          <View style={styles.sectionAvatar}>
-            <Image style={styles.iconAvatar} source={{ uri: `${API_URL}/${data.shop?.image}` }} />
-
-            <View style={styles.textAvatar}>
-              <Text style={styles.textAvatarName}>{data.shop.name}</Text>
-
-              <Text style={styles.textAvatarTime}>13:56</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionRow}>
-            <View style={styles.sectionRowRL}>
-              <Text style={styles.starText}>{t('Correspondence')}</Text>
-            </View>
-
-            <View style={styles.sectionRowRL}>
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIconDefault} />
-            </View>
+          <View style={styles.priceRow}>
+            <Text style={styles.price}>{discountedPrice(data)} TMT</Text>
+            {!!data.discount && (
+              <Text style={styles.oldPrice}>{Math.floor(data.price)} TMT</Text>
+            )}
           </View>
 
-          <View style={styles.sectionRow}>
-            <View style={styles.sectionRowRL}>
-              <Text style={styles.starText}>{t('Price / quality')}</Text>
+          {data.shop?.name ? (
+            <View style={styles.shopRow}>
+              {data.shop.image ? (
+                <Image style={styles.shopAvatar} source={{ uri: `${API_URL}/${data.shop.image}` }} />
+              ) : (
+                <View style={[styles.shopAvatar, styles.imagePlaceholder]}>
+                  <Ionicons name="storefront-outline" size={20} color={colors.textMuted} />
+                </View>
+              )}
+              <View>
+                <Text style={styles.shopLabel}>{t('product.shop')}</Text>
+                <Text style={styles.shopName}>{data.shop.name}</Text>
+              </View>
             </View>
+          ) : null}
 
-            <View style={styles.sectionRowRL}>
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIconDefault} />
-            </View>
-          </View>
+          <HorizontalRule />
 
-          <View style={styles.sectionRow}>
-            <View style={styles.sectionRowRL}>
-              <Text style={styles.starText}>{t('Shop service')}</Text>
+          {compositions.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionName}>{t('Composition')}</Text>
+              <Text style={styles.sectionText}>{compositions.join(', ')}</Text>
             </View>
+          )}
 
-            <View style={styles.sectionRowRL}>
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIcon} />
-              <Image style={styles.starIconDesign} source={starIconDefault} />
-              <Image style={styles.starIconDesign} source={starIconDefault} />
-              <Image style={styles.starIconDesign} source={starIconDefault} />
+          {(width || height) ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionName}>{t('Size')}</Text>
+              <View style={styles.sizeRow}>
+                {width ? (
+                  <View style={styles.sizeItem}>
+                    <Ionicons name="swap-horizontal" size={16} color={colors.textMuted} />
+                    <Text style={styles.sectionText}>{t('product.width')} {width} cm</Text>
+                  </View>
+                ) : null}
+                {height ? (
+                  <View style={styles.sizeItem}>
+                    <Ionicons name="swap-vertical" size={16} color={colors.textMuted} />
+                    <Text style={styles.sectionText}>{t('product.height')} {height} cm</Text>
+                  </View>
+                ) : null}
+              </View>
             </View>
-          </View>
+          ) : null}
+
+          {description ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionName}>{t('Description')}</Text>
+              <Text style={styles.sectionText}>{description}</Text>
+            </View>
+          ) : null}
         </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionComment}>Спасибо большое магазину, пришло все быстро, качественно!</Text>
-        </View>
-        
-      </View>
+      </ScrollView>
 
       <BottomButton data={data} />
-
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -182,155 +148,123 @@ export default ProductDetailScreen
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1
+    flex: 1,
+    backgroundColor: colors.background,
   },
   headerImageSection: {
     position: 'relative',
   },
-  headerBackIcon: {
+  headerButton: {
     position: 'absolute',
-    top: 20,
-    left: 20,
     zIndex: 1,
-  },
-  headerFavoriteIcon: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    zIndex: 1,
-    backgroundColor: '#fff',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: radius.full,
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  container: {
-    backgroundColor: '#fff',
+  headerBackIcon: {
+    left: spacing.lg,
+  },
+  headerFavoriteIcon: {
+    right: spacing.lg,
   },
   mainImage: {
-    height: 345,
+    height: 360,
     width: '100%',
   },
-  image: {
-    height: 84,
-    width: 84,
-    borderRadius: 10,
-    opacity: 0.5
-  },
-  active: {
-    opacity: 1
-  },
-  selectImage: {
-    height: 84,
-    width: 84,
-    height: 'auto',
-    marginRight: 10,
+  imagePlaceholder: {
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   containerImage: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
   },
-  productName: {
-    fontSize: 26,
-    fontWeight: '600'
+  selectImage: {
+    marginRight: spacing.sm,
   },
-  sectionName: {
-    fontSize: 20,
-    fontWeight: '600'
+  image: {
+    height: 72,
+    width: 72,
+    borderRadius: radius.md,
+    opacity: 0.5,
   },
-  sectionSize: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10
-  },
-  sectionDescription: {
-    fontSize: 16,
-  },
-  sectionComment: {
-    fontSize: 16,
-    marginBottom: 50,
+  active: {
+    opacity: 1,
   },
   productDetails: {
-    marginHorizontal: 10,
-    marginVertical: 10
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl,
   },
-  starContainer: {
+  productName: {
+    fontSize: typography.size.xxl,
+    fontWeight: typography.weight.semibold,
+    color: colors.text,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginTop: spacing.sm,
+  },
+  price: {
+    fontSize: typography.size.xl,
+    fontWeight: typography.weight.bold,
+    color: colors.text,
+  },
+  oldPrice: {
+    fontSize: typography.size.sm,
+    color: colors.textMuted,
+    textDecorationLine: 'line-through',
+    marginLeft: spacing.sm,
+  },
+  shopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 10
+    marginVertical: spacing.md,
+  },
+  shopAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.full,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginRight: spacing.md,
+  },
+  shopLabel: {
+    fontSize: typography.size.xs,
+    color: colors.textMuted,
+  },
+  shopName: {
+    fontSize: typography.size.md,
+    fontWeight: typography.weight.semibold,
+    color: colors.text,
   },
   section: {
-    marginTop: 2,
-    marginBottom: 10
+    marginBottom: spacing.lg,
   },
-  sectionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  sectionRowRL: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  sectionName: {
+    fontSize: typography.size.lg,
+    fontWeight: typography.weight.semibold,
+    color: colors.text,
+    marginBottom: spacing.xs,
   },
   sectionText: {
-    marginHorizontal: 10,
-    fontSize: 16,
+    fontSize: typography.size.md,
+    lineHeight: 22,
+    color: colors.text,
   },
-  iconStar: {
-    width: 26,
-    height: 26,
-  },
-  iconArrow1: {
-    width: 12,
-    height: 5
-  },
-  iconArrow2: {
-    width: 5,
-    height: 12
-  },
-  numberStar: {
-    fontSize: 16,
-    marginHorizontal: 10
-  },
-  sectionAvatar: {
+  sizeRow: {
     flexDirection: 'row',
-    marginVertical: 10,
+    flexWrap: 'wrap',
+    gap: spacing.lg,
   },
-  iconAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  textAvatar: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    marginHorizontal: 10,
-  },
-  textAvatarName: {
-    fontWeight: '600',
-    fontSize: 18,
-  },
-  textAvatarTime: {
-    fontSize: 14,
-    color: '#999',
-    fontWeight: '600'
-  },
-  starText: {
-    fontSize: 16,
-  },
-  starIconDesign: {
-    width: 16,
-    height: 16,
-    marginHorizontal: 5
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+  sizeItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
 })

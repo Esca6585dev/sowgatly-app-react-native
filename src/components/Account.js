@@ -3,6 +3,7 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import CustomButton from './CustomButton'
 import { colors, radius, spacing, typography } from '../theme'
@@ -18,6 +19,7 @@ const MenuRow = ({ icon, label, onPress }) => (
 const Account = () => {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,18 +28,18 @@ const Account = () => {
           <View style={styles.avatar}>
             <Ionicons name="person" size={32} color={colors.textInverse} />
           </View>
-          <Text style={styles.name}>{user?.name || 'Ulanyjy'}</Text>
+          <Text style={styles.name}>{user?.name || t('common.user')}</Text>
           <Text style={styles.phone}>{user?.phone_number}</Text>
         </View>
 
         <View style={styles.menu}>
-          <MenuRow icon="receipt-outline" label="Sargytlarym" onPress={() => navigation.navigate('Orders')} />
-          <MenuRow icon="location-outline" label="Salgylarym" />
-          <MenuRow icon="heart-outline" label="Halananlarym" onPress={() => navigation.navigate('Favorite')} />
-          <MenuRow icon="settings-outline" label="Sazlamalar" />
+          <MenuRow icon="receipt-outline" label={t('account.orders')} onPress={() => navigation.navigate('Orders')} />
+          <MenuRow icon="location-outline" label={t('account.addresses')} />
+          <MenuRow icon="heart-outline" label={t('account.favorites')} onPress={() => navigation.navigate('Favorite')} />
+          <MenuRow icon="settings-outline" label={t('account.settings')} onPress={() => navigation.navigate('Settings')} />
         </View>
 
-        <CustomButton text="Ulgamdan çyk" type="SECONDARY" onPress={logout} />
+        <CustomButton text={t('account.logout')} type="SECONDARY" onPress={logout} />
       </ScrollView>
     </SafeAreaView>
   )

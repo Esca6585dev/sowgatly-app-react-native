@@ -3,15 +3,12 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Platform } from 'react
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
 import { API_URL } from '../config/api';
+import { localize, discountedPrice } from '../utils/localize';
 import { colors, radius, spacing, typography } from '../theme';
-
-const getDiscountedPrice = (price, discount) => {
-  return Math.floor(price - (price * discount) / 100);
-};
 
 const ProductCard = ({ product, onPress, isFavorite, onToggleFavorite, cardWidth = 150 }) => {
   const { i18n } = useTranslation();
-  const name = product.name?.[i18n.language] || product.name?.tm || '';
+  const name = localize(product, 'name', i18n.language);
 
   return (
     <TouchableOpacity style={[styles.container, { width: cardWidth }]} onPress={onPress}>
@@ -46,7 +43,7 @@ const ProductCard = ({ product, onPress, isFavorite, onToggleFavorite, cardWidth
       <View style={styles.priceRow}>
         {product.discount ? (
           <>
-            <Text style={styles.price}>{getDiscountedPrice(product.price, product.discount)} TMT</Text>
+            <Text style={styles.price}>{discountedPrice(product)} TMT</Text>
             <Text style={styles.oldPrice}>{Math.floor(product.price)} TMT</Text>
           </>
         ) : (

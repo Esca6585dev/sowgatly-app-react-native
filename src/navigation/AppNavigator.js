@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, ActivityIndicator } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { colors } from '../theme'
 
@@ -22,6 +23,7 @@ import CollectionScreen from '../screens/CollectionScreen'
 import CheckoutScreen from '../screens/CheckoutScreen'
 import OrderSuccessScreen from '../screens/OrderSuccessScreen'
 import OrdersScreen from '../screens/OrdersScreen'
+import SettingsScreen from '../screens/SettingsScreen'
 import WelcomeScreen from '../screens/WelcomeScreen'
 import LoginScreen from '../screens/LoginScreen'
 import OTPScreen from '../screens/OTPScreen'
@@ -31,6 +33,8 @@ const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
 const TabNavigator = () => {
+  const { t } = useTranslation()
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -51,12 +55,12 @@ const TabNavigator = () => {
 
           return <Ionicons style={styles.tabIcon} name={iconName} size={size} color={color} />
         },
-        tabBarLabel: () => {
-          return <Text style={styles.tabIconTitle}>{route.name}</Text>
+        tabBarLabel: ({ color }) => {
+          return <Text style={[styles.tabIconTitle, { color }]}>{t(`tabs.${route.name}`)}</Text>
         },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarStyle: { backgroundColor: colors.background, height: 60 },
+        tabBarStyle: { backgroundColor: colors.background, minHeight: 60 },
       })}
     >
       <Tab.Screen name="Main" component={Main} options={{ header: () => <Header /> }} />
@@ -77,7 +81,10 @@ const AuthStack = () => (
   </Stack.Navigator>
 )
 
-const MainStack = () => (
+const MainStack = () => {
+  const { t } = useTranslation()
+
+  return (
   <Stack.Navigator
     screenOptions={{
       headerStyle: { backgroundColor: colors.background },
@@ -85,14 +92,16 @@ const MainStack = () => (
       headerTitleStyle: { fontWeight: 'bold' },
     }}>
     <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ headerShown: false }} />
-    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false, title: 'Önüm' }} />
+    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Collection" component={CollectionScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ headerShown: false }} />
     <Stack.Screen name="OrderSuccess" component={OrderSuccessScreen} options={{ headerShown: false, gestureEnabled: false }} />
     <Stack.Screen name="Orders" component={OrdersScreen} options={{ headerShown: false }} />
-    <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Bildirişler' }} />
+    <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: t('notifications.title') }} />
   </Stack.Navigator>
-)
+  )
+}
 
 const AppNavigator = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -125,7 +134,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   tabIconTitle: {
-    color: colors.text,
+    fontSize: 11,
     paddingVertical: 2
   }
 })

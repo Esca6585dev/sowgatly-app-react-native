@@ -5,6 +5,7 @@ import bgImageHNY from '../../assets/banner-2.png';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { apiRequest } from '../config/api';
+import { localize } from '../utils/localize';
 import { colors, radius } from '../theme';
 
 const Banners = () => {
@@ -70,12 +71,12 @@ const Banners = () => {
                             <TouchableOpacity
                                 onPress={() => navigation.navigate('Collection', {
                                     categoryId: item.id,
-                                    title: item.name?.[i18n.language] || item.name?.tm,
+                                    category: item,
                                 })}
                             >
                                 <ImageBackground style={styles.bannerBlock} source={(index%2 == 0) ? bgImageHNY : bgImageRose}>
                                     <Text style={styles.bannerBlockText}>
-                                        {item.name?.[i18n.language] || item.name?.tm}
+                                        {localize(item, 'name', i18n.language)}
                                     </Text>
                                 </ImageBackground>
                             </TouchableOpacity>

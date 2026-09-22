@@ -4,20 +4,22 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing, typography } from '../theme'
 
 const Navbar = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.bgColorWhite}>
+    <View style={[styles.bgColorWhite, { paddingTop: insets.top }]}>
       <Text style={styles.city}>{t('City')}</Text>
 
       <View style={styles.container}>
 
         <View style={styles.containerLeft}>
-          <Text style={styles.cityName}>Aşgabat</Text>
+          <Text style={styles.cityName}>{t('common.cityAshgabat')}</Text>
             <Icon name="angle-down" style={styles.iconAngleDown} size={20} color={colors.text} />
         </View>
 

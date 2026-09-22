@@ -7,6 +7,7 @@ import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 import { apiRequest } from '../config/api'
 import { useAuth } from '../context/AuthContext'
+import { useTranslation } from 'react-i18next'
 import { colors, spacing, typography } from '../theme'
 
 const OTPScreen = ({ route }) => {
@@ -16,10 +17,11 @@ const OTPScreen = ({ route }) => {
     const [isLoading, setIsLoading] = useState(false)
     const navigation = useNavigation()
     const { login } = useAuth()
+    const { t } = useTranslation()
 
     const onLoginPressed = async () => {
         if (otp.trim().length !== 4) {
-            setError('4 sanly kody giriziň');
+            setError(t('otp.invalidLength'));
             return;
         }
 
@@ -37,10 +39,10 @@ const OTPScreen = ({ route }) => {
                 // into the authenticated stack automatically.
                 await login(data.access_token, data.user);
             } else {
-                setError(Array.isArray(data.message) ? data.message[0] : (data.message || 'Kod nädogry'));
+                setError(Array.isArray(data.message) ? data.message[0] : (data.message || t('otp.invalid')));
             }
         } catch (e) {
-            setError(e.message || 'Näsazlyk ýüze çykdy. Gaýtadan synanyşyň.');
+            setError(e.message || t('common.genericError'));
         } finally {
             setIsLoading(false);
         }
@@ -50,12 +52,12 @@ const OTPScreen = ({ route }) => {
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scroll}>
                 <Image source={Logo} style={styles.logo} resizeMode="contain" />
-                <Text style={styles.title}>Kody giriziň</Text>
-                <Text style={styles.subtitle}>{phoneNumber} belgä iberilen kody giriziň</Text>
+                <Text style={styles.title}>{t('otp.title')}</Text>
+                <Text style={styles.subtitle}>{t('otp.subtitle', { phone: phoneNumber })}</Text>
 
                 <CustomInput
                     placeholder="0000"
-                    label="Tassyklama kody"
+                    label={t('otp.label')}
                     value={otp}
                     setValue={(v) => { setOtp(v); setError(''); }}
                     keyboardType="number-pad"
@@ -63,13 +65,13 @@ const OTPScreen = ({ route }) => {
                 />
 
                 <CustomButton
-                    text="Girmek"
+                    text={t('otp.submit')}
                     onPress={onLoginPressed}
                     loading={isLoading}
                 />
 
                 <CustomButton
-                    text="Belgini üýtget"
+                    text={t('otp.changeNumber')}
                     type="TERTIARY"
                     onPress={() => navigation.goBack()}
                 />

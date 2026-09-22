@@ -3,15 +3,9 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity }
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../config/api';
 import { colors, radius, spacing, typography } from '../theme';
-
-const STATUS_LABELS = {
-  pending: 'Garaşylýar',
-  processing: 'Taýýarlanýar',
-  completed: 'Tamamlandy',
-  cancelled: 'Ýatyryldy',
-};
 
 const STATUS_COLORS = {
   pending: colors.warning,
@@ -20,26 +14,41 @@ const STATUS_COLORS = {
   cancelled: colors.danger,
 };
 
-const OrderRow = ({ order }) => (
-  <View style={styles.card}>
-    <View style={styles.cardHeader}>
-      <Text style={styles.orderId}>Sargyt #{order.id}</Text>
-      <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[order.status] || colors.textMuted }]}>
-        <Text style={styles.statusText}>{STATUS_LABELS[order.status] || order.status}</Text>
+const DATE_LOCALES = { tm: 'tk-TM', ru: 'ru-RU', en: 'en-GB' };
+
+const formatDate = (value, lang) => {
+  if (!value) return '';
+  const date = new Date(value);
+  try {
+    return date.toLocaleDateString(DATE_LOCALES[lang] || 'ru-RU');
+  } catch (e) {
+    return date.toLocaleDateString();
+  }
+};
+
+const OrderRow = ({ order }) => {
+  const { t, i18n } = useTranslation();
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.orderId}>{t('orders.order', { id: order.id })}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[order.status] || colors.textMuted }]}>
+          <Text style={styles.statusText}>{t(`orders.status.${order.status}`, { defaultValue: order.status })}</Text>
+        </View>
+      </View>
+      <Text style={styles.itemsCount}>{t('common.items', { count: order.items?.length || 0 })}</Text>
+      <View style={styles.cardFooter}>
+        <Text style={styles.date}>{formatDate(order.created_at, i18n.language)}</Text>
+        <Text style={styles.total}>{Math.floor(order.total_amount)} TMT</Text>
       </View>
     </View>
-    <Text style={styles.itemsCount}>{order.items?.length || 0} haryt</Text>
-    <View style={styles.cardFooter}>
-      <Text style={styles.date}>
-        {order.created_at ? new Date(order.created_at).toLocaleDateString('ru-RU') : ''}
-      </Text>
-      <Text style={styles.total}>{Math.floor(order.total_amount)} TMT</Text>
-    </View>
-  </View>
-);
+  );
+};
 
 const OrdersScreen = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState([]);
 
@@ -68,7 +77,7 @@ const OrdersScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={styles.title}>Sargytlarym</Text>
+        <Text style={styles.title}>{t('orders.title')}</Text>
         <View style={styles.backButton} />
       </View>
 
@@ -79,7 +88,7 @@ const OrdersScreen = () => {
       ) : orders.length === 0 ? (
         <View style={styles.center}>
           <Ionicons name="receipt-outline" size={56} color={colors.textMuted} />
-          <Text style={styles.emptyTitle}>Sargydyňyz ýok</Text>
+          <Text style={styles.emptyTitle}>{t('orders.empty')}</Text>
         </View>
       ) : (
         <FlatList

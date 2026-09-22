@@ -3,33 +3,39 @@ import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { useTranslation } from 'react-i18next'
 import { API_URL, apiRequest } from '../config/api'
 import CustomButton from './CustomButton'
+import { localize, discountedPrice } from '../utils/localize'
 import { colors, radius, spacing, typography } from '../theme'
 
-const getUnitPrice = (product) => {
-  if (!product) return 0;
-  return product.discount
-    ? Math.floor(product.price - (product.price * product.discount) / 100)
-    : product.price;
-};
+const CartItemRow = ({ item }) => {
+  const { t, i18n } = useTranslation();
+  const imageUrl = item.product?.images?.[0]?.url;
 
-const CartItemRow = ({ item }) => (
-  <View style={styles.itemRow}>
-    <Image
-      style={styles.itemImage}
-      source={{ uri: `${API_URL}/${item.product?.images?.[0]?.url}` }}
-    />
-    <View style={styles.itemInfo}>
-      <Text style={styles.itemName} numberOfLines={2}>{item.product?.name}</Text>
-      <Text style={styles.itemQty}>{item.quantity} sany</Text>
+  return (
+    <View style={styles.itemRow}>
+      {imageUrl ? (
+        <Image style={styles.itemImage} source={{ uri: `${API_URL}/${imageUrl}` }} />
+      ) : (
+        <View style={[styles.itemImage, styles.itemImagePlaceholder]}>
+          <Ionicons name="gift-outline" size={24} color={colors.textMuted} />
+        </View>
+      )}
+      <View style={styles.itemInfo}>
+        <Text style={styles.itemName} numberOfLines={2}>
+          {localize(item.product, 'name', i18n.language) || t('common.product')}
+        </Text>
+        <Text style={styles.itemQty}>{item.quantity} {t('common.pcs')}</Text>
+      </View>
+      <Text style={styles.itemPrice}>{discountedPrice(item.product) * item.quantity} TMT</Text>
     </View>
-    <Text style={styles.itemPrice}>{Math.floor(getUnitPrice(item.product) * item.quantity)} TMT</Text>
-  </View>
-);
+  );
+};
 
 const Cart = () => {
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -57,7 +63,7 @@ const Cart = () => {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.center}>
+      <SafeAreaView edges={['left', 'right']} style={styles.center}>
         <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
@@ -65,16 +71,16 @@ const Cart = () => {
 
   if (!items.length) {
     return (
-      <SafeAreaView style={styles.center}>
+      <SafeAreaView edges={['left', 'right']} style={styles.center}>
         <Ionicons name="cart-outline" size={56} color={colors.textMuted} />
-        <Text style={styles.emptyTitle}>Sebediňiz boş</Text>
-        <Text style={styles.emptySubtitle}>Halan zatlaryňyzy sebede goşuň</Text>
+        <Text style={styles.emptyTitle}>{t('cart.emptyTitle')}</Text>
+        <Text style={styles.emptySubtitle}>{t('cart.emptySubtitle')}</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={['left', 'right']} style={styles.container}>
       <FlatList
         data={items}
         keyExtractor={(item) => item.id.toString()}
@@ -83,11 +89,11 @@ const Cart = () => {
       />
       <View style={styles.footer}>
         <View style={styles.totalRow}>
-          <Text style={styles.totalLabel}>Jemi</Text>
+          <Text style={styles.totalLabel}>{t('cart.total')}</Text>
           <Text style={styles.totalValue}>{Math.floor(total)} TMT</Text>
         </View>
         <CustomButton
-          text="Sargyt beriň"
+          text={t('cart.order')}
           onPress={() => navigation.navigate('Checkout', { items, total })}
         />
       </View>
@@ -136,6 +142,11 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: radius.sm,
     marginRight: spacing.md,
+  },
+  itemImagePlaceholder: {
+    backgroundColor: colors.surfaceAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   itemInfo: {
     flex: 1,

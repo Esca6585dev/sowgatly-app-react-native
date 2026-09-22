@@ -1,13 +1,149 @@
 {
-    "greeting": "Hello",
-    "farewell": "Goodbye",
-    "City": "City",
-    "Search by products": "Search by products",
-    "Composition": "Composition",
-    "Size": "Size",
-    "Description": "Description",
-    "Ratings and reviews": "Ratings and reviews",
-    "Correspondence": "Correspondence",
-    "Price / quality": "Price / quality",
-    "Shop service": "Shop service"
+  "City": "City",
+  "Search by products": "Search by products",
+  "Composition": "Composition",
+  "Size": "Size",
+  "Description": "Description",
+  "Ratings and reviews": "Ratings and reviews",
+  "Correspondence": "Correspondence",
+  "Price / quality": "Price / quality",
+  "Shop service": "Shop service",
+  "common": {
+    "currency": "TMT",
+    "pcs": "pcs",
+    "items": "Items: {{count}}",
+    "error": "Error",
+    "genericError": "Something went wrong. Please try again.",
+    "product": "Product",
+    "user": "User",
+    "phone": "Phone number",
+    "optional": "optional",
+    "cityAshgabat": "Ashgabat"
+  },
+  "tabs": {
+    "Main": "Home",
+    "Favorite": "Favorites",
+    "Chat": "Chat",
+    "Cart": "Cart",
+    "Account": "Account"
+  },
+  "welcome": {
+    "subtitle": "Pick the best gifts and get them delivered to the door",
+    "start": "Get started",
+    "createAccount": "Create an account"
+  },
+  "login": {
+    "title": "Welcome",
+    "subtitle": "Enter your phone number to continue",
+    "getCode": "Get code",
+    "noAccount": "No account? Create one",
+    "phoneRequired": "Enter your phone number",
+    "notFound": "No account found for this number"
+  },
+  "otp": {
+    "title": "Enter the code",
+    "subtitle": "Enter the code sent to {{phone}}",
+    "label": "Verification code",
+    "submit": "Log in",
+    "changeNumber": "Change number",
+    "invalidLength": "Enter the 4-digit code",
+    "invalid": "Invalid code"
+  },
+  "register": {
+    "title": "Create an account",
+    "subtitle": "Enter your details to shop on Sowgatly",
+    "nameLabel": "Full name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "submit": "Create account",
+    "haveAccount": "Already have an account? Log in",
+    "required": "Enter your name and phone number",
+    "failed": "Could not create the account"
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "addedTitle": "Added to cart",
+    "addedMessage": "{{name}} was added to your cart.",
+    "addFailed": "Could not add to cart.",
+    "width": "Width",
+    "height": "Height",
+    "shop": "Shop",
+    "outOfStock": "Out of stock"
+  },
+  "collection": {
+    "title": "Collection",
+    "empty": "No products in this category"
+  },
+  "favorites": {
+    "emptyTitle": "No favorites yet",
+    "emptySubtitle": "Tap the heart on a product to save it here"
+  },
+  "chat": {
+    "emptyTitle": "No messages",
+    "emptySubtitle": "Messages about your order will show up here"
+  },
+  "cart": {
+    "emptyTitle": "Your cart is empty",
+    "emptySubtitle": "Add the things you like to your cart",
+    "total": "Total",
+    "order": "Place order"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "recipientPhone": "Recipient's phone",
+    "deliveryTime": "Delivery time",
+    "asap": "Deliver now",
+    "scheduled": "Pick a time",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "weekdays": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "noSlots": "No time slots left today, pick another day",
+    "note": "Note (optional)",
+    "notePlaceholder": "E.g. the doorbell doesn't work",
+    "submit": "Confirm order",
+    "phoneRequired": "Enter the recipient's phone number",
+    "slotRequired": "Pick a delivery time",
+    "failed": "Could not create the order"
+  },
+  "orderSuccess": {
+    "title": "Order placed!",
+    "number": "Order number: #{{id}}",
+    "created": "Your order was created",
+    "totalPaid": "Total",
+    "home": "Home"
+  },
+  "orders": {
+    "title": "My orders",
+    "empty": "You have no orders",
+    "order": "Order #{{id}}",
+    "status": {
+      "pending": "Pending",
+      "processing": "Preparing",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "account": {
+    "orders": "My orders",
+    "addresses": "My addresses",
+    "favorites": "Favorites",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications"
+  }
 }

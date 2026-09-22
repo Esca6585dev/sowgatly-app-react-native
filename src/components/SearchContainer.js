@@ -1,5 +1,4 @@
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTranslation } from 'react-i18next';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { colors, radius, spacing, typography } from '../theme'
@@ -9,7 +8,7 @@ const SearchContainer = () => {
 
     return (
         <View style={styles.searchContainer}>
-            <SafeAreaView style={styles.searchAreaView}>
+            <View style={styles.searchAreaView}>
                 <View style={styles.inputSearchBlock}>
                     <Ionicons name="search" style={styles.iconSearch} size={18} color={colors.textMuted} />
 
@@ -24,7 +23,7 @@ const SearchContainer = () => {
                     <Ionicons name="settings-outline" size={18} color={colors.text} />
                 </TouchableOpacity>
 
-            </SafeAreaView>
+            </View>
         </View>
     )
 }
