@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../config/api';
 import { colors, radius, spacing, typography } from '../theme';
 
-const STATUS_COLORS = {
+export const STATUS_COLORS = {
   pending: colors.warning,
   processing: colors.accent,
   completed: colors.success,
@@ -16,7 +16,7 @@ const STATUS_COLORS = {
 
 const DATE_LOCALES = { tm: 'tk-TM', ru: 'ru-RU', en: 'en-GB' };
 
-const formatDate = (value, lang) => {
+export const formatDate = (value, lang) => {
   if (!value) return '';
   const date = new Date(value);
   try {
@@ -26,11 +26,18 @@ const formatDate = (value, lang) => {
   }
 };
 
-const OrderRow = ({ order }) => {
+export const formatDateTime = (value, lang) => {
+  if (!value) return '';
+  const date = new Date(value);
+  const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  return `${formatDate(value, lang)} ${time}`;
+};
+
+const OrderRow = ({ order, onPress }) => {
   const { t, i18n } = useTranslation();
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.cardHeader}>
         <Text style={styles.orderId}>{t('orders.order', { id: order.id })}</Text>
         <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[order.status] || colors.textMuted }]}>
@@ -42,7 +49,7 @@ const OrderRow = ({ order }) => {
         <Text style={styles.date}>{formatDate(order.created_at, i18n.language)}</Text>
         <Text style={styles.total}>{Math.floor(order.total_amount)} TMT</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -95,7 +102,9 @@ const OrdersScreen = () => {
           data={orders}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.list}
-          renderItem={({ item }) => <OrderRow order={item} />}
+          renderItem={({ item }) => (
+            <OrderRow order={item} onPress={() => navigation.navigate('OrderDetail', { order: item })} />
+          )}
         />
       )}
     </SafeAreaView>

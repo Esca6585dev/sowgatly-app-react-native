@@ -134,7 +134,9 @@
       "processing": "Preparing",
       "completed": "Completed",
       "cancelled": "Cancelled"
-    }
+    },
+    "note": "Note",
+    "viewOrder": "View order"
   },
   "account": {
     "orders": "My orders",

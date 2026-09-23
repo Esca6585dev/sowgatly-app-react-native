@@ -134,7 +134,9 @@
       "processing": "Готовится",
       "completed": "Выполнен",
       "cancelled": "Отменён"
-    }
+    },
+    "note": "Комментарий",
+    "viewOrder": "Посмотреть заказ"
   },
   "account": {
     "orders": "Мои заказы",

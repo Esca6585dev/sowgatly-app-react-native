@@ -41,7 +41,13 @@ const OrderSuccessScreen = () => {
       ) : null}
 
       <View style={styles.actions}>
-        <CustomButton text={t('orders.title')} onPress={() => navigation.replace('Orders')} type="SECONDARY" />
+        <CustomButton
+          text={order?.id ? t('orders.viewOrder') : t('orders.title')}
+          onPress={() => (order?.id
+            ? navigation.replace('OrderDetail', { orderId: order.id })
+            : navigation.replace('Orders'))}
+          type="SECONDARY"
+        />
         <CustomButton text={t('orderSuccess.home')} onPress={goHome} />
       </View>
     </SafeAreaView>

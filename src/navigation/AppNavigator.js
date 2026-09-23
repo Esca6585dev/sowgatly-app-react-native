@@ -26,6 +26,7 @@ import OrdersScreen from '../screens/OrdersScreen'
 import SettingsScreen from '../screens/SettingsScreen'
 import SearchScreen from '../screens/SearchScreen'
 import AddressesScreen from '../screens/AddressesScreen'
+import OrderDetailScreen from '../screens/OrderDetailScreen'
 import AddressFormScreen from '../screens/AddressFormScreen'
 import WelcomeScreen from '../screens/WelcomeScreen'
 import LoginScreen from '../screens/LoginScreen'
@@ -100,6 +101,7 @@ const MainStack = () => {
     <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ headerShown: false }} />
     <Stack.Screen name="OrderSuccess" component={OrderSuccessScreen} options={{ headerShown: false, gestureEnabled: false }} />
     <Stack.Screen name="Orders" component={OrdersScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Addresses" component={AddressesScreen} options={{ headerShown: false }} />
     <Stack.Screen name="AddressForm" component={AddressFormScreen} options={{ headerShown: false }} />

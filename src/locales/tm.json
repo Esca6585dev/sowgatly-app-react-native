@@ -134,7 +134,9 @@
       "processing": "Taýýarlanýar",
       "completed": "Tamamlandy",
       "cancelled": "Ýatyryldy"
-    }
+    },
+    "note": "Bellik",
+    "viewOrder": "Sargydy gör"
   },
   "account": {
     "orders": "Sargytlarym",
