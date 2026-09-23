@@ -18,7 +18,10 @@
     "user": "Ulanyjy",
     "phone": "Telefon belgisi",
     "optional": "islege görä",
-    "cityAshgabat": "Aşgabat"
+    "cityAshgabat": "Aşgabat",
+    "cancel": "Ýatyr",
+    "delete": "Poz",
+    "save": "Ýatda sakla"
   },
   "tabs": {
     "Main": "Esasy",
@@ -111,7 +114,9 @@
     "submit": "Sargyty tassyklaň",
     "phoneRequired": "Eltip beriljek adamyň telefon belgisini giriziň",
     "slotRequired": "Eltip bermek wagtyny saýlaň",
-    "failed": "Sargyt döredip bolmady"
+    "failed": "Sargyt döredip bolmady",
+    "address": "Eltip bermek salgysy",
+    "addressRequired": "Eltip bermek salgysyny saýlaň"
   },
   "orderSuccess": {
     "title": "Sargydyňyz kabul edildi!",
@@ -161,5 +166,19 @@
     "reset": "Süzgüçleri arassala",
     "empty": "Hiç zat tapylmady",
     "found": "Tapyldy: {{count}}"
+  },
+  "addresses": {
+    "empty": "Salgy goşulmadyk",
+    "add": "Salgy goş",
+    "edit": "Salgyny üýtget",
+    "deleteTitle": "Salgyny pozmalymy?",
+    "untitled": "Salgy",
+    "default": "Esasy",
+    "titleLabel": "Ady (islege görä)",
+    "titlePlaceholder": "Mysal: Öý, Iş",
+    "addressLabel": "Salgy",
+    "addressPlaceholder": "Etrap, köçe, jaý, öý",
+    "addressRequired": "Salgyny giriziň",
+    "makeDefault": "Esasy salgy et"
   }
 }

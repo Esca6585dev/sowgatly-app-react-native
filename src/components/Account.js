@@ -34,7 +34,7 @@ const Account = () => {
 
         <View style={styles.menu}>
           <MenuRow icon="receipt-outline" label={t('account.orders')} onPress={() => navigation.navigate('Orders')} />
-          <MenuRow icon="location-outline" label={t('account.addresses')} />
+          <MenuRow icon="location-outline" label={t('account.addresses')} onPress={() => navigation.navigate('Addresses')} />
           <MenuRow icon="heart-outline" label={t('account.favorites')} onPress={() => navigation.navigate('Favorite')} />
           <MenuRow icon="settings-outline" label={t('account.settings')} onPress={() => navigation.navigate('Settings')} />
         </View>

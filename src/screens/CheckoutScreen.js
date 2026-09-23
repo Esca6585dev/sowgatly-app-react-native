@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
+import { loadAddresses } from './AddressesScreen';
 import { colors, radius, spacing, typography } from '../theme';
 
 const TIME_SLOTS = [
@@ -48,6 +49,8 @@ const CheckoutScreen = () => {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [note, setNote] = useState('');
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,7 +61,29 @@ const CheckoutScreen = () => {
     return TIME_SLOTS.filter((slot) => slot.startHour > currentHour);
   }, [selectedDayIndex]);
 
+  // Reload on focus so an address added from here shows up (and gets
+  // picked) when the user comes back.
+  useFocusEffect(
+    useCallback(() => {
+      loadAddresses()
+        .then((list) => {
+          setAddresses(list);
+          setSelectedAddressId((current) => {
+            if (current && list.some((a) => a.id === current)) return current;
+            return (list.find((a) => a.is_default) || list[0])?.id ?? null;
+          });
+        })
+        .catch(() => setAddresses([]));
+    }, [])
+  );
+
+  const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
+
   const onSubmit = async () => {
+    if (!selectedAddress) {
+      setError(t('checkout.addressRequired'));
+      return;
+    }
     if (!recipientPhone.trim()) {
       setError(t('checkout.phoneRequired'));
       return;
@@ -85,6 +110,7 @@ const CheckoutScreen = () => {
           delivery_type: deliveryType,
           scheduled_at: scheduledAt,
           recipient_phone: recipientPhone,
+          delivery_address: selectedAddress.address,
           note: note.trim() || undefined,
         },
       });
@@ -116,6 +142,32 @@ const CheckoutScreen = () => {
           <Text style={styles.summaryLabel}>{t('common.items', { count: items.length })}</Text>
           <Text style={styles.summaryTotal}>{Math.floor(total)} TMT</Text>
         </View>
+
+        <Text style={styles.sectionTitle}>{t('checkout.address')}</Text>
+        {addresses.map((address) => {
+          const active = address.id === selectedAddressId;
+          return (
+            <TouchableOpacity
+              key={address.id}
+              style={[styles.addressCard, active && styles.addressCardActive]}
+              onPress={() => { setSelectedAddressId(address.id); setError(''); }}
+            >
+              <Ionicons
+                name={active ? 'radio-button-on' : 'radio-button-off'}
+                size={20}
+                color={active ? colors.accent : colors.textMuted}
+              />
+              <View style={styles.addressBody}>
+                {address.title ? <Text style={styles.addressTitle}>{address.title}</Text> : null}
+                <Text style={styles.addressText}>{address.address}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+        <TouchableOpacity style={styles.addAddress} onPress={() => navigation.navigate('AddressForm')}>
+          <Ionicons name="add-circle-outline" size={20} color={colors.accent} />
+          <Text style={styles.addAddressText}>{t('addresses.add')}</Text>
+        </TouchableOpacity>
 
         <CustomInput
           label={t('checkout.recipientPhone')}
@@ -250,6 +302,44 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginTop: spacing.md,
     marginBottom: spacing.sm,
+  },
+  addressCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  addressCardActive: {
+    borderColor: colors.accent,
+    backgroundColor: colors.accentMuted,
+  },
+  addressBody: {
+    flex: 1,
+  },
+  addressTitle: {
+    fontSize: typography.size.sm,
+    fontWeight: typography.weight.semibold,
+    color: colors.text,
+  },
+  addressText: {
+    fontSize: typography.size.sm,
+    color: colors.text,
+  },
+  addAddress: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  addAddressText: {
+    fontSize: typography.size.sm,
+    fontWeight: typography.weight.semibold,
+    color: colors.accent,
   },
   typeRow: {
     flexDirection: 'row',

@@ -18,7 +18,10 @@
     "user": "User",
     "phone": "Phone number",
     "optional": "optional",
-    "cityAshgabat": "Ashgabat"
+    "cityAshgabat": "Ashgabat",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save"
   },
   "tabs": {
     "Main": "Home",
@@ -111,7 +114,9 @@
     "submit": "Confirm order",
     "phoneRequired": "Enter the recipient's phone number",
     "slotRequired": "Pick a delivery time",
-    "failed": "Could not create the order"
+    "failed": "Could not create the order",
+    "address": "Delivery address",
+    "addressRequired": "Choose a delivery address"
   },
   "orderSuccess": {
     "title": "Order placed!",
@@ -161,5 +166,19 @@
     "reset": "Clear filters",
     "empty": "Nothing found",
     "found": "Found: {{count}}"
+  },
+  "addresses": {
+    "empty": "No addresses yet",
+    "add": "Add address",
+    "edit": "Edit address",
+    "deleteTitle": "Delete this address?",
+    "untitled": "Address",
+    "default": "Default",
+    "titleLabel": "Label (optional)",
+    "titlePlaceholder": "E.g. Home, Work",
+    "addressLabel": "Address",
+    "addressPlaceholder": "District, street, building, apartment",
+    "addressRequired": "Enter the address",
+    "makeDefault": "Make default"
   }
 }
