@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator, TouchableOpacity, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -9,9 +9,11 @@ import CustomButton from './CustomButton'
 import { localize, discountedPrice } from '../utils/localize'
 import { colors, radius, spacing, typography } from '../theme'
 
-const CartItemRow = ({ item }) => {
+const CartItemRow = ({ item, busy, onChangeQuantity, onRemove }) => {
   const { t, i18n } = useTranslation();
   const imageUrl = item.product?.images?.[0]?.url;
+  const stock = item.product?.stock;
+  const atMax = stock !== null && stock !== undefined && item.quantity >= stock;
 
   return (
     <View style={styles.itemRow}>
@@ -26,9 +28,30 @@ const CartItemRow = ({ item }) => {
         <Text style={styles.itemName} numberOfLines={2}>
           {localize(item.product, 'name', i18n.language) || t('common.product')}
         </Text>
-        <Text style={styles.itemQty}>{item.quantity} {t('common.pcs')}</Text>
+        <View style={styles.stepper}>
+          <TouchableOpacity
+            style={styles.stepButton}
+            onPress={() => (item.quantity > 1 ? onChangeQuantity(item, item.quantity - 1) : onRemove(item))}
+            disabled={busy}
+          >
+            <Ionicons name={item.quantity > 1 ? 'remove' : 'trash-outline'} size={16} color={item.quantity > 1 ? colors.text : colors.danger} />
+          </TouchableOpacity>
+          <Text style={styles.itemQty}>{item.quantity} {t('common.pcs')}</Text>
+          <TouchableOpacity
+            style={styles.stepButton}
+            onPress={() => onChangeQuantity(item, item.quantity + 1)}
+            disabled={busy || atMax}
+          >
+            <Ionicons name="add" size={16} color={atMax ? colors.border : colors.text} />
+          </TouchableOpacity>
+        </View>
       </View>
-      <Text style={styles.itemPrice}>{discountedPrice(item.product) * item.quantity} TMT</Text>
+      <View style={styles.itemRight}>
+        <Text style={styles.itemPrice}>{discountedPrice(item.product) * item.quantity} TMT</Text>
+        <TouchableOpacity onPress={() => onRemove(item)} disabled={busy} style={styles.removeButton}>
+          <Ionicons name="close" size={18} color={colors.textMuted} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -39,13 +62,39 @@ const Cart = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const [busyItemId, setBusyItemId] = useState(null);
+
+  const applyCart = (json) => {
+    setItems(json.cart?.items || []);
+    setTotal(json.total_amount || 0);
+  };
+
+  const changeQuantity = async (item, quantity) => {
+    setBusyItemId(item.id);
+    try {
+      applyCart(await apiRequest(`/cart/items/${item.id}`, { method: 'PUT', body: { quantity } }));
+    } catch (e) {
+      Alert.alert(t('common.error'), e.message || t('common.genericError'));
+    } finally {
+      setBusyItemId(null);
+    }
+  };
+
+  const removeItem = async (item) => {
+    setBusyItemId(item.id);
+    try {
+      applyCart(await apiRequest(`/cart/items/${item.id}`, { method: 'DELETE' }));
+    } catch (e) {
+      Alert.alert(t('common.error'), e.message || t('common.genericError'));
+    } finally {
+      setBusyItemId(null);
+    }
+  };
 
   const loadCart = useCallback(async () => {
     setIsLoading(true);
     try {
-      const json = await apiRequest('/cart');
-      setItems(json.cart?.items || []);
-      setTotal(json.total_amount || 0);
+      applyCart(await apiRequest('/cart'));
     } catch (error) {
       console.error('Cart API error:', error);
       setItems([]);
@@ -84,7 +133,14 @@ const Cart = () => {
       <FlatList
         data={items}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <CartItemRow item={item} />}
+        renderItem={({ item }) => (
+          <CartItemRow
+            item={item}
+            busy={busyItemId === item.id}
+            onChangeQuantity={changeQuantity}
+            onRemove={removeItem}
+          />
+        )}
         contentContainerStyle={styles.list}
       />
       <View style={styles.footer}>
@@ -156,10 +212,36 @@ const styles = StyleSheet.create({
     fontWeight: typography.weight.medium,
     color: colors.text,
   },
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.sm,
+    alignSelf: 'flex-start',
+    backgroundColor: colors.background,
+    borderRadius: radius.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  stepButton: {
+    width: 32,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   itemQty: {
+    minWidth: 44,
+    textAlign: 'center',
     fontSize: typography.size.xs,
-    color: colors.textMuted,
-    marginTop: spacing.xs,
+    color: colors.text,
+  },
+  itemRight: {
+    alignSelf: 'stretch',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginLeft: spacing.sm,
+  },
+  removeButton: {
+    padding: spacing.xs,
   },
   itemPrice: {
     fontSize: typography.size.sm,
