@@ -50,7 +50,10 @@
     "submit": "Log in",
     "changeNumber": "Change number",
     "invalidLength": "Enter the 4-digit code",
-    "invalid": "Invalid code"
+    "invalid": "Invalid code",
+    "resend": "Resend code",
+    "resendIn": "Resend code in {{seconds}}s",
+    "resent": "A new code was sent"
   },
   "register": {
     "title": "Create an account",

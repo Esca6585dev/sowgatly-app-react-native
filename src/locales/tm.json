@@ -50,7 +50,10 @@
     "submit": "Girmek",
     "changeNumber": "Belgini üýtget",
     "invalidLength": "4 sanly kody giriziň",
-    "invalid": "Kod nädogry"
+    "invalid": "Kod nädogry",
+    "resend": "Kody täzeden iber",
+    "resendIn": "Kody täzeden ibermek: {{seconds}} sek",
+    "resent": "Täze kod iberildi"
   },
   "register": {
     "title": "Hasap dörediň",
