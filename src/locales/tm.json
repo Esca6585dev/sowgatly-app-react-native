@@ -145,5 +145,21 @@
   "notifications": {
     "title": "Bildirişler",
     "empty": "Bildiriş ýok"
+  },
+  "search": {
+    "sort": "Tertip",
+    "sorts": {
+      "newest": "Täzeler",
+      "price_asc": "Arzandan",
+      "price_desc": "Gymmatdan"
+    },
+    "price": "Bahasy",
+    "minPrice": "Iň az",
+    "maxPrice": "Iň köp",
+    "category": "Kategoriýa",
+    "all": "Hemmesi",
+    "reset": "Süzgüçleri arassala",
+    "empty": "Hiç zat tapylmady",
+    "found": "Tapyldy: {{count}}"
   }
 }

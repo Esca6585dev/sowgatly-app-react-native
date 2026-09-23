@@ -1,26 +1,30 @@
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { colors, radius, spacing, typography } from '../theme'
 
 const SearchContainer = () => {
     const { t } = useTranslation();
+    const navigation = useNavigation();
 
     return (
         <View style={styles.searchContainer}>
             <View style={styles.searchAreaView}>
-                <View style={styles.inputSearchBlock}>
+                <TouchableOpacity
+                    style={styles.inputSearchBlock}
+                    onPress={() => navigation.navigate('Search')}
+                    activeOpacity={0.7}
+                >
                     <Ionicons name="search" style={styles.iconSearch} size={18} color={colors.textMuted} />
+                    <Text style={styles.placeholder} numberOfLines={1}>{t('Search by products')}</Text>
+                </TouchableOpacity>
 
-                    <TextInput
-                        style={styles.inputText}
-                        placeholder={t('Search by products')}
-                        placeholderTextColor={colors.textMuted}
-                    />
-                </View>
-
-                <TouchableOpacity style={styles.buttonSetting}>
-                    <Ionicons name="settings-outline" size={18} color={colors.text} />
+                <TouchableOpacity
+                    style={styles.buttonSetting}
+                    onPress={() => navigation.navigate('Search', { openFilters: true })}
+                >
+                    <Ionicons name="options-outline" size={18} color={colors.text} />
                 </TouchableOpacity>
 
             </View>
@@ -55,10 +59,10 @@ const styles = StyleSheet.create({
     iconSearch: {
         marginRight: spacing.sm,
     },
-    inputText: {
+    placeholder: {
         flex: 1,
         fontSize: typography.size.sm,
-        color: colors.text,
+        color: colors.textMuted,
     },
     buttonSetting: {
         height: 40,

@@ -145,5 +145,21 @@
   "notifications": {
     "title": "Notifications",
     "empty": "No notifications"
+  },
+  "search": {
+    "sort": "Sort",
+    "sorts": {
+      "newest": "Newest",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low"
+    },
+    "price": "Price",
+    "minPrice": "Min",
+    "maxPrice": "Max",
+    "category": "Category",
+    "all": "All",
+    "reset": "Clear filters",
+    "empty": "Nothing found",
+    "found": "Found: {{count}}"
   }
 }
