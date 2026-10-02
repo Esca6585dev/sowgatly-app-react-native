@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { API_URL } from '../config/api'
 import { useFavorites } from '../context/FavoritesContext'
-import { localize, discountedPrice } from '../utils/localize'
+import { localize, discountedPrice, imageUri } from '../utils/localize'
 import { colors, radius, spacing, typography } from '../theme'
 
 const ProductDetailScreen = ({ route }) => {
@@ -86,19 +86,23 @@ const ProductDetailScreen = ({ route }) => {
           </View>
 
           {data.shop?.name ? (
-            <View style={styles.shopRow}>
+            <TouchableOpacity
+              style={styles.shopRow}
+              onPress={() => navigation.navigate('Shop', { shopId: data.shop.id, shop: data.shop })}
+            >
               {data.shop.image ? (
-                <Image style={styles.shopAvatar} source={{ uri: `${API_URL}/${data.shop.image}` }} />
+                <Image style={styles.shopAvatar} source={{ uri: imageUri(data.shop.image, API_URL) }} />
               ) : (
                 <View style={[styles.shopAvatar, styles.imagePlaceholder]}>
                   <Ionicons name="storefront-outline" size={20} color={colors.textMuted} />
                 </View>
               )}
-              <View>
+              <View style={styles.shopText}>
                 <Text style={styles.shopLabel}>{t('product.shop')}</Text>
                 <Text style={styles.shopName}>{data.shop.name}</Text>
               </View>
-            </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </TouchableOpacity>
           ) : null}
 
           <HorizontalRule />
@@ -233,6 +237,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginRight: spacing.md,
+  },
+  shopText: {
+    flex: 1,
   },
   shopLabel: {
     fontSize: typography.size.xs,

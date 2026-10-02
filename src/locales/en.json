@@ -190,5 +190,10 @@
     "edit": "Edit profile",
     "nameRequired": "Enter your name",
     "phoneHint": "You log in with your phone number, so it cannot be changed."
+  },
+  "shop": {
+    "products": "Products from this shop",
+    "weekdays": "Mon–Fri",
+    "weekend": "Sat–Sun"
   }
 }

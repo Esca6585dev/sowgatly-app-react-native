@@ -23,3 +23,9 @@ export const discountedPrice = (product) => {
   const discount = Number(product.discount) || 0;
   return Math.floor(price - (price * discount) / 100);
 };
+
+// Some resources return absolute image URLs, raw models return storage paths.
+export const imageUri = (path, apiUrl) => {
+  if (!path) return null;
+  return /^https?:\/\//.test(path) ? path : `${apiUrl}/${path}`;
+};

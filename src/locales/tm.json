@@ -190,5 +190,10 @@
     "edit": "Profili üýtget",
     "nameRequired": "Adyňyzy giriziň",
     "phoneHint": "Telefon belgisi bilen ulgama girýärsiňiz, ony üýtgedip bolmaýar."
+  },
+  "shop": {
+    "products": "Dükanyň önümleri",
+    "weekdays": "Duş–Anna",
+    "weekend": "Şen–Ýek"
   }
 }
