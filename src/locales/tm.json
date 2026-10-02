@@ -185,5 +185,10 @@
     "addressPlaceholder": "Etrap, köçe, jaý, öý",
     "addressRequired": "Salgyny giriziň",
     "makeDefault": "Esasy salgy et"
+  },
+  "profile": {
+    "edit": "Profili üýtget",
+    "nameRequired": "Adyňyzy giriziň",
+    "phoneHint": "Telefon belgisi bilen ulgama girýärsiňiz, ony üýtgedip bolmaýar."
   }
 }

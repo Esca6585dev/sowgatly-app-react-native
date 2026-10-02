@@ -33,6 +33,11 @@ export const AuthProvider = ({ children }) => {
     setUser(newUser ?? null);
   };
 
+  const updateUser = async (newUser) => {
+    await AsyncStorage.setItem(USER_KEY, JSON.stringify(newUser));
+    setUser(newUser);
+  };
+
   const logout = async () => {
     try {
       await apiRequest('/logout', { method: 'POST' });
@@ -45,7 +50,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = useMemo(
-    () => ({ token, user, isAuthenticated: !!token, isLoading, login, logout }),
+    () => ({ token, user, isAuthenticated: !!token, isLoading, login, logout, updateUser }),
     [token, user, isLoading]
   );
 

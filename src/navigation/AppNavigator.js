@@ -27,6 +27,7 @@ import SettingsScreen from '../screens/SettingsScreen'
 import SearchScreen from '../screens/SearchScreen'
 import AddressesScreen from '../screens/AddressesScreen'
 import OrderDetailScreen from '../screens/OrderDetailScreen'
+import ProfileEditScreen from '../screens/ProfileEditScreen'
 import AddressFormScreen from '../screens/AddressFormScreen'
 import WelcomeScreen from '../screens/WelcomeScreen'
 import LoginScreen from '../screens/LoginScreen'
@@ -103,6 +104,7 @@ const MainStack = () => {
     <Stack.Screen name="Orders" component={OrdersScreen} options={{ headerShown: false }} />
     <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="ProfileEdit" component={ProfileEditScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Addresses" component={AddressesScreen} options={{ headerShown: false }} />
     <Stack.Screen name="AddressForm" component={AddressFormScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false, animation: 'fade' }} />

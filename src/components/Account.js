@@ -30,6 +30,10 @@ const Account = () => {
           </View>
           <Text style={styles.name}>{user?.name || t('common.user')}</Text>
           <Text style={styles.phone}>{user?.phone_number}</Text>
+          <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('ProfileEdit')}>
+            <Ionicons name="create-outline" size={16} color={colors.accent} />
+            <Text style={styles.editText}>{t('profile.edit')}</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.menu}>
@@ -77,6 +81,19 @@ const styles = StyleSheet.create({
     fontSize: typography.size.sm,
     color: colors.textMuted,
     marginTop: spacing.xs,
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.md,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+  },
+  editText: {
+    color: colors.accent,
+    fontWeight: typography.weight.semibold,
+    fontSize: typography.size.sm,
   },
   menu: {
     marginBottom: spacing.xxl,

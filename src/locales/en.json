@@ -185,5 +185,10 @@
     "addressPlaceholder": "District, street, building, apartment",
     "addressRequired": "Enter the address",
     "makeDefault": "Make default"
+  },
+  "profile": {
+    "edit": "Edit profile",
+    "nameRequired": "Enter your name",
+    "phoneHint": "You log in with your phone number, so it cannot be changed."
   }
 }
