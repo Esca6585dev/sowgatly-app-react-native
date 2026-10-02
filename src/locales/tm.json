@@ -195,5 +195,9 @@
     "products": "Dükanyň önümleri",
     "weekdays": "Duş–Anna",
     "weekend": "Şen–Ýek"
+  },
+  "city": {
+    "all": "Ähli şäherler",
+    "choose": "Şäher saýlaň"
   }
 }

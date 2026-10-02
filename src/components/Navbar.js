@@ -5,10 +5,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRegion } from '../context/RegionContext';
+import { localize } from '../utils/localize';
 import { colors, spacing, typography } from '../theme'
 
 const Navbar = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { region } = useRegion();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
@@ -18,10 +21,12 @@ const Navbar = () => {
 
       <View style={styles.container}>
 
-        <View style={styles.containerLeft}>
-          <Text style={styles.cityName}>{t('common.cityAshgabat')}</Text>
-            <Icon name="angle-down" style={styles.iconAngleDown} size={20} color={colors.text} />
-        </View>
+        <TouchableOpacity style={styles.containerLeft} onPress={() => navigation.navigate('CityPicker')}>
+          <Text style={styles.cityName}>
+            {region ? localize(region, 'name', i18n.language) : t('city.all')}
+          </Text>
+          <Icon name="angle-down" style={styles.iconAngleDown} size={20} color={colors.text} />
+        </TouchableOpacity>
 
         <View style={styles.containerRight}>
           <TouchableOpacity

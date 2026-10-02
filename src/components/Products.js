@@ -4,18 +4,21 @@ import { useNavigation } from '@react-navigation/native';
 import { apiRequest } from '../config/api';
 import ProductCard from './ProductCard';
 import { useFavorites } from '../context/FavoritesContext';
+import { useRegion } from '../context/RegionContext';
 import { spacing } from '../theme';
 
 const Products = ({ category_id }) => {
     const [data, setData] = useState([]);
     const navigation = useNavigation();
     const { isFavorite, toggleFavorite } = useFavorites();
+    const { region } = useRegion();
 
     const getProducts = async () => {
         if (!category_id) return;
 
         try {
-            const json = await apiRequest(`/product/category/${category_id}`);
+            const regionQuery = region ? `?region_id=${region.id}` : '';
+            const json = await apiRequest(`/product/category/${category_id}${regionQuery}`);
             setData(json.data || []);
         } catch (error) {
             console.error('API Error:', error);
@@ -25,7 +28,7 @@ const Products = ({ category_id }) => {
 
     useEffect(() => {
         getProducts();
-    }, [category_id]);
+    }, [category_id, region?.id]);
 
     if (!data.length) {
         return null;

@@ -8,6 +8,7 @@ import { apiRequest } from '../config/api';
 import ProductCard from '../components/ProductCard';
 import { useFavorites } from '../context/FavoritesContext';
 import { localize } from '../utils/localize';
+import { useRegion } from '../context/RegionContext';
 import { colors, spacing, typography } from '../theme';
 
 const GAP = spacing.md;
@@ -24,12 +25,14 @@ const CollectionScreen = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState([]);
     const { isFavorite, toggleFavorite } = useFavorites();
+    const { region } = useRegion();
 
     useEffect(() => {
         const load = async () => {
             setIsLoading(true);
             try {
-                const json = await apiRequest(`/product/category/${categoryId}`);
+                const regionQuery = region ? `?region_id=${region.id}` : '';
+                const json = await apiRequest(`/product/category/${categoryId}${regionQuery}`);
                 setData(json.data || []);
             } catch (error) {
                 console.error('Collection API error:', error);
@@ -40,7 +43,7 @@ const CollectionScreen = () => {
         };
 
         if (categoryId) load();
-    }, [categoryId]);
+    }, [categoryId, region?.id]);
 
     return (
         <SafeAreaView style={styles.container}>

@@ -10,6 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { apiRequest } from '../config/api';
 import ProductCard from '../components/ProductCard';
 import { useFavorites } from '../context/FavoritesContext';
+import { useRegion } from '../context/RegionContext';
 import { localize } from '../utils/localize';
 import { colors, radius, spacing, typography } from '../theme';
 
@@ -20,8 +21,9 @@ const SORTS = ['newest', 'price_asc', 'price_desc'];
 
 const EMPTY_FILTERS = { sort: 'newest', minPrice: '', maxPrice: '', categoryId: null, shopId: null };
 
-const buildQuery = (text, filters, page) => {
+const buildQuery = (text, filters, page, regionId) => {
   const params = [`page=${page}`];
+  if (regionId) params.push(`region_id=${regionId}`);
   if (text.trim()) params.push(`name=${encodeURIComponent(text.trim())}`);
   if (filters.minPrice) params.push(`min_price=${encodeURIComponent(filters.minPrice)}`);
   if (filters.maxPrice) params.push(`max_price=${encodeURIComponent(filters.maxPrice)}`);
@@ -42,6 +44,7 @@ const SearchScreen = () => {
   const route = useRoute();
   const { t, i18n } = useTranslation();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { region } = useRegion();
 
   const [text, setText] = useState(route.params?.query || '');
   const [filters, setFilters] = useState({ ...EMPTY_FILTERS, ...(route.params?.filters || {}) });
@@ -71,7 +74,7 @@ const SearchScreen = () => {
     setIsLoading(true);
     setError('');
     try {
-      const json = await apiRequest(buildQuery(text, filters, nextPage));
+      const json = await apiRequest(buildQuery(text, filters, nextPage, region?.id));
       if (id !== requestId.current) return; // a newer search replaced this one
       const items = json.data || [];
       setResults((prev) => (nextPage === 1 ? items : [...prev, ...items]));
@@ -85,7 +88,7 @@ const SearchScreen = () => {
     } finally {
       if (id === requestId.current) setIsLoading(false);
     }
-  }, [text, filters, t]);
+  }, [text, filters, region?.id, t]);
 
   // Debounce typing; filter changes go through the same path.
   useEffect(() => {

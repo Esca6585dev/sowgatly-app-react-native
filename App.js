@@ -4,13 +4,16 @@ import i18n from './src/i18n';
 import AppNavigator from './src/navigation/AppNavigator'
 import { AuthProvider } from './src/context/AuthContext'
 import { FavoritesProvider } from './src/context/FavoritesContext'
+import { RegionProvider } from './src/context/RegionContext'
 
 const App = () => {
     return (
         <I18nextProvider i18n={i18n}>
             <AuthProvider>
                 <FavoritesProvider>
-                    <AppNavigator style={styles.container} />
+                    <RegionProvider>
+                        <AppNavigator style={styles.container} />
+                    </RegionProvider>
                 </FavoritesProvider>
             </AuthProvider>
         </I18nextProvider>

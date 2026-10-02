@@ -195,5 +195,9 @@
     "products": "Products from this shop",
     "weekdays": "Mon–Fri",
     "weekend": "Sat–Sun"
+  },
+  "city": {
+    "all": "All cities",
+    "choose": "Choose a city"
   }
 }
