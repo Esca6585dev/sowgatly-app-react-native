@@ -17,6 +17,13 @@ export async function getToken() {
   return AsyncStorage.getItem(TOKEN_KEY);
 }
 
+// AuthContext registers a handler so an expired/revoked token drops the
+// user back to the login screen instead of every request failing.
+let onUnauthorized = null;
+export function setUnauthorizedHandler(handler) {
+  onUnauthorized = handler;
+}
+
 export async function apiRequest(path, { method = 'GET', body, auth = true, headers = {} } = {}) {
   const requestHeaders = {
     Accept: 'application/json',
@@ -42,6 +49,10 @@ export async function apiRequest(path, { method = 'GET', body, auth = true, head
     data = await response.json();
   } catch (e) {
     data = null;
+  }
+
+  if (response.status === 401 && auth && onUnauthorized) {
+    onUnauthorized();
   }
 
   if (!response.ok) {

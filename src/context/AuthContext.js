@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TOKEN_KEY, USER_KEY, apiRequest } from '../config/api';
+import { TOKEN_KEY, USER_KEY, apiRequest, setUnauthorizedHandler } from '../config/api';
 
 const AuthContext = createContext(null);
 
@@ -38,16 +38,25 @@ export const AuthProvider = ({ children }) => {
     setUser(newUser);
   };
 
+  const clearSession = async () => {
+    await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY]);
+    setToken(null);
+    setUser(null);
+  };
+
   const logout = async () => {
     try {
       await apiRequest('/logout', { method: 'POST' });
     } catch (e) {
       // Ignore network/logout errors; still clear local session below.
     }
-    await AsyncStorage.multiRemove([TOKEN_KEY, USER_KEY]);
-    setToken(null);
-    setUser(null);
+    await clearSession();
   };
+
+  useEffect(() => {
+    setUnauthorizedHandler(clearSession);
+    return () => setUnauthorizedHandler(null);
+  }, []);
 
   const value = useMemo(
     () => ({ token, user, isAuthenticated: !!token, isLoading, login, logout, updateUser }),
