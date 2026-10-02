@@ -1,10 +1,11 @@
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
+import { apiRequest } from '../config/api'
 import CustomButton from './CustomButton'
 import { colors, radius, spacing, typography } from '../theme'
 
@@ -20,6 +21,14 @@ const Account = () => {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const [ownsShop, setOwnsShop] = useState(false);
+
+  // Shop owners get an extra entry for managing incoming orders.
+  useEffect(() => {
+    apiRequest('/shop/orders?status=pending')
+      .then(() => setOwnsShop(true))
+      .catch(() => setOwnsShop(false));
+  }, [user?.id]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,6 +49,9 @@ const Account = () => {
           <MenuRow icon="receipt-outline" label={t('account.orders')} onPress={() => navigation.navigate('Orders')} />
           <MenuRow icon="location-outline" label={t('account.addresses')} onPress={() => navigation.navigate('Addresses')} />
           <MenuRow icon="heart-outline" label={t('account.favorites')} onPress={() => navigation.navigate('Favorite')} />
+          {ownsShop && (
+            <MenuRow icon="storefront-outline" label={t('shopOrders.title')} onPress={() => navigation.navigate('ShopOrders')} />
+          )}
           <MenuRow icon="settings-outline" label={t('account.settings')} onPress={() => navigation.navigate('Settings')} />
         </View>
 

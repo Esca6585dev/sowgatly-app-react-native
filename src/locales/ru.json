@@ -139,7 +139,10 @@
       "cancelled": "Отменён"
     },
     "note": "Комментарий",
-    "viewOrder": "Посмотреть заказ"
+    "viewOrder": "Посмотреть заказ",
+    "cancelTitle": "Отменить заказ?",
+    "cancelMessage": "Отменённый заказ нельзя восстановить.",
+    "cancelConfirm": "Отменить заказ"
   },
   "account": {
     "orders": "Мои заказы",
@@ -154,7 +157,9 @@
   },
   "notifications": {
     "title": "Уведомления",
-    "empty": "Нет уведомлений"
+    "empty": "Нет уведомлений",
+    "orderCreated": "Ваш заказ #{{id}} принят",
+    "orderStatus": "Статус заказа #{{id}}: {{status}}"
   },
   "search": {
     "sort": "Сортировка",
@@ -210,5 +215,14 @@
     "comment": "Комментарий (необязательно)",
     "commentPlaceholder": "Расскажите о товаре",
     "ratingRequired": "Поставьте оценку"
+  },
+  "shopOrders": {
+    "title": "Заказы магазина",
+    "cancelTitle": "Отменить заказ?",
+    "actions": {
+      "processing": "Начать готовить",
+      "completed": "Выполнен",
+      "cancelled": "Отменить"
+    }
   }
 }

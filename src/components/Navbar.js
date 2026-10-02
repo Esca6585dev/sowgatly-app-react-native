@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { apiRequest } from '../config/api';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRegion } from '../context/RegionContext';
 import { localize } from '../utils/localize';
@@ -12,6 +13,17 @@ import { colors, spacing, typography } from '../theme'
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   const { region } = useRegion();
+  const [unread, setUnread] = useState(0);
+
+  // The header belongs to the focused tab, so this refreshes whenever the
+  // user comes back to a tab (e.g. after reading notifications).
+  useFocusEffect(
+    useCallback(() => {
+      apiRequest('/me/notifications')
+        .then((json) => setUnread(json.meta?.unread || 0))
+        .catch(() => {});
+    }, [])
+  );
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
@@ -34,6 +46,11 @@ const Navbar = () => {
             onPress={() => navigation.navigate('Notifications')}
           >
             <Ionicons name="notifications-outline" size={20} color={colors.text} />
+            {unread > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unread > 9 ? '9+' : unread}</Text>
+              </View>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -85,6 +102,23 @@ const styles = StyleSheet.create({
   },
   iconAngleDown: {
     paddingLeft: spacing.xs,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -6,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    paddingHorizontal: 3,
+    backgroundColor: colors.danger,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: {
+    color: colors.textInverse,
+    fontSize: 10,
+    fontWeight: typography.weight.bold,
   },
   iconButton: {
     marginLeft: spacing.md,

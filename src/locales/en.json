@@ -139,7 +139,10 @@
       "cancelled": "Cancelled"
     },
     "note": "Note",
-    "viewOrder": "View order"
+    "viewOrder": "View order",
+    "cancelTitle": "Cancel this order?",
+    "cancelMessage": "A cancelled order cannot be restored.",
+    "cancelConfirm": "Cancel order"
   },
   "account": {
     "orders": "My orders",
@@ -154,7 +157,9 @@
   },
   "notifications": {
     "title": "Notifications",
-    "empty": "No notifications"
+    "empty": "No notifications",
+    "orderCreated": "Your order #{{id}} was placed",
+    "orderStatus": "Order #{{id}} is now: {{status}}"
   },
   "search": {
     "sort": "Sort",
@@ -210,5 +215,14 @@
     "comment": "Comment (optional)",
     "commentPlaceholder": "Tell others about this product",
     "ratingRequired": "Choose a rating"
+  },
+  "shopOrders": {
+    "title": "Shop orders",
+    "cancelTitle": "Cancel this order?",
+    "actions": {
+      "processing": "Start preparing",
+      "completed": "Mark completed",
+      "cancelled": "Cancel"
+    }
   }
 }

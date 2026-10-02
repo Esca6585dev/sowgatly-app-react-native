@@ -139,7 +139,10 @@
       "cancelled": "Ýatyryldy"
     },
     "note": "Bellik",
-    "viewOrder": "Sargydy gör"
+    "viewOrder": "Sargydy gör",
+    "cancelTitle": "Sargydy ýatyrmalymy?",
+    "cancelMessage": "Sargyt ýatyrylandan soň ony dikeldip bolmaýar.",
+    "cancelConfirm": "Sargydy ýatyr"
   },
   "account": {
     "orders": "Sargytlarym",
@@ -154,7 +157,9 @@
   },
   "notifications": {
     "title": "Bildirişler",
-    "empty": "Bildiriş ýok"
+    "empty": "Bildiriş ýok",
+    "orderCreated": "#{{id}} sargydyňyz kabul edildi",
+    "orderStatus": "#{{id}} sargydyň ýagdaýy: {{status}}"
   },
   "search": {
     "sort": "Tertip",
@@ -210,5 +215,14 @@
     "comment": "Teswir (islege görä)",
     "commentPlaceholder": "Önüm barada pikiriňizi ýazyň",
     "ratingRequired": "Ýyldyz sanyny saýlaň"
+  },
+  "shopOrders": {
+    "title": "Dükanymyň sargytlary",
+    "cancelTitle": "Sargydy ýatyrmalymy?",
+    "actions": {
+      "processing": "Taýýarlap başla",
+      "completed": "Tamamlandy",
+      "cancelled": "Ýatyr"
+    }
   }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +38,28 @@ const OrderDetailScreen = () => {
   }, [orderId]);
 
   const lang = i18n.language;
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const cancelOrder = () => {
+    Alert.alert(t('orders.cancelTitle'), t('orders.cancelMessage'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('orders.cancelConfirm'),
+        style: 'destructive',
+        onPress: async () => {
+          setIsCancelling(true);
+          try {
+            const json = await apiRequest(`/orders/${orderId}/cancel`, { method: 'POST' });
+            if (json.order) setOrder(json.order);
+          } catch (e) {
+            Alert.alert(t('common.error'), e.message || t('common.genericError'));
+          } finally {
+            setIsCancelling(false);
+          }
+        },
+      },
+    ]);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -109,6 +131,14 @@ const OrderDetailScreen = () => {
             <Text style={styles.totalLabel}>{t('cart.total')}</Text>
             <Text style={styles.totalValue}>{Math.floor(order.total_amount)} TMT</Text>
           </View>
+
+          {order.status === 'pending' && (
+            <TouchableOpacity style={styles.cancelButton} onPress={cancelOrder} disabled={isCancelling}>
+              {isCancelling
+                ? <ActivityIndicator color={colors.danger} />
+                : <Text style={styles.cancelText}>{t('orders.cancelConfirm')}</Text>}
+            </TouchableOpacity>
+          )}
         </ScrollView>
       )}
     </SafeAreaView>
@@ -160,5 +190,14 @@ const styles = StyleSheet.create({
   itemTotal: { fontSize: typography.size.sm, fontWeight: typography.weight.semibold, color: colors.text, marginLeft: spacing.sm },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   totalLabel: { fontSize: typography.size.md, color: colors.textMuted },
+  cancelButton: {
+    marginTop: spacing.xl,
+    borderWidth: 1,
+    borderColor: colors.danger,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+  },
+  cancelText: { color: colors.danger, fontWeight: typography.weight.semibold, fontSize: typography.size.md },
   totalValue: { fontSize: typography.size.xl, fontWeight: typography.weight.bold, color: colors.text },
 });
