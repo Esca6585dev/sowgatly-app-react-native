@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors, spacing, typography } from '../theme';
 
 const NotificationsScreen = () => {

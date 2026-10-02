@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import HorizontalRule from '../components/HorizontalRule'
 import BottomButton from '../components/BottomButton'
 import React, { useState } from 'react'

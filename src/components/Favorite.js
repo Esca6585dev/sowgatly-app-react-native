@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Dimensions, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next'
 import ProductCard from './ProductCard'
 import { useFavorites } from '../context/FavoritesContext'

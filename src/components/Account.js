@@ -2,7 +2,7 @@ import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-nati
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import CustomButton from './CustomButton'

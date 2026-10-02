@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Dimensions, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../config/api';
 import ProductCard from '../components/ProductCard';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import { useTranslation } from 'react-i18next';
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { apiRequest } from '../config/api';
 import { localize, discountedPrice } from '../utils/localize';
 import { colors, radius, spacing, typography } from '../theme';

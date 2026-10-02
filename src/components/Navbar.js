@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
-import Icon from 'react-native-vector-icons/FontAwesome'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Icon from '@expo/vector-icons/FontAwesome'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

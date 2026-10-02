@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
 import { API_URL } from '../config/api';
 import { localize, discountedPrice } from '../utils/localize';
