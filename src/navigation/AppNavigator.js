@@ -30,6 +30,7 @@ import OrderDetailScreen from '../screens/OrderDetailScreen'
 import ProfileEditScreen from '../screens/ProfileEditScreen'
 import ShopScreen from '../screens/ShopScreen'
 import CityPickerScreen from '../screens/CityPickerScreen'
+import ReviewFormScreen from '../screens/ReviewFormScreen'
 import AddressFormScreen from '../screens/AddressFormScreen'
 import WelcomeScreen from '../screens/WelcomeScreen'
 import LoginScreen from '../screens/LoginScreen'
@@ -107,6 +108,7 @@ const MainStack = () => {
     <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
     <Stack.Screen name="CityPicker" component={CityPickerScreen} options={{ headerShown: false, presentation: 'modal' }} />
+    <Stack.Screen name="ReviewForm" component={ReviewFormScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Shop" component={ShopScreen} options={{ headerShown: false }} />
     <Stack.Screen name="ProfileEdit" component={ProfileEditScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Addresses" component={AddressesScreen} options={{ headerShown: false }} />

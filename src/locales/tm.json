@@ -199,5 +199,16 @@
   "city": {
     "all": "Ähli şäherler",
     "choose": "Şäher saýlaň"
+  },
+  "reviews": {
+    "count": "{{count}} syn",
+    "none": "Entek syn ýok",
+    "write": "Syn ýaz",
+    "edit": "Synyňy üýtget",
+    "showAll": "Ählisini görkez ({{count}})",
+    "yourRating": "Bahaňyz",
+    "comment": "Teswir (islege görä)",
+    "commentPlaceholder": "Önüm barada pikiriňizi ýazyň",
+    "ratingRequired": "Ýyldyz sanyny saýlaň"
   }
 }

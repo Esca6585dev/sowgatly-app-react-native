@@ -199,5 +199,16 @@
   "city": {
     "all": "All cities",
     "choose": "Choose a city"
+  },
+  "reviews": {
+    "count": "Reviews: {{count}}",
+    "none": "No reviews yet",
+    "write": "Write a review",
+    "edit": "Edit your review",
+    "showAll": "Show all ({{count}})",
+    "yourRating": "Your rating",
+    "comment": "Comment (optional)",
+    "commentPlaceholder": "Tell others about this product",
+    "ratingRequired": "Choose a rating"
   }
 }

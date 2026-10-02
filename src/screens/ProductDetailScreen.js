@@ -4,6 +4,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import HorizontalRule from '../components/HorizontalRule'
 import BottomButton from '../components/BottomButton'
+import ProductReviews from '../components/ProductReviews'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { API_URL } from '../config/api'
@@ -140,6 +141,8 @@ const ProductDetailScreen = ({ route }) => {
               <Text style={styles.sectionText}>{description}</Text>
             </View>
           ) : null}
+
+          <ProductReviews productId={data.id} />
         </View>
       </ScrollView>
 
