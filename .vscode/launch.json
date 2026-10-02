@@ -5,11 +5,31 @@
     "version": "0.2.0",
     "configurations": [
         {
+            // Expo serves the web build on 8081, the same port as Metro.
+            // Start it with `npx expo start --web` before launching this.
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "name": "Expo web (Chrome)",
+            "url": "http://localhost:8081",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+                "webpack:///./*": "${workspaceFolder}/*",
+                "webpack:///*": "*"
+            }
+        },
+        {
+            // Attaches to the Hermes runtime of the app running on the device
+            // or emulator. Requires the Metro dev server to be up.
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Metro (Hermes)",
+            "port": 8081,
+            "cwd": "${workspaceFolder}",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
     ]
 }

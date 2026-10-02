@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, SectionList, ActivityIndicator, TouchableOpacit
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { apiRequest } from '../config/api';
 import { useRegion } from '../context/RegionContext';
 import { localize } from '../utils/localize';

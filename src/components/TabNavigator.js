@@ -6,7 +6,7 @@ import Account from './Account';
 import Chat from './Chat';
 import Cart from './Cart';
 import Favorite from './Favorite';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from '@expo/vector-icons/Ionicons';
 import Header from './Header';
 import ProductDetails from './ProductDetails';
 import StackNavigation from './StackNavigation'
