@@ -27,7 +27,8 @@
     "Main": "Home",
     "Favorite": "Favorites",
     "Cart": "Cart",
-    "Account": "Account"
+    "Account": "Account",
+    "Chat": "Chats"
   },
   "welcome": {
     "subtitle": "Pick the best gifts and get them delivered to the door",
@@ -219,5 +220,17 @@
       "completed": "Mark completed",
       "cancelled": "Cancel"
     }
+  },
+  "chat": {
+    "title": "Chats",
+    "you": "You",
+    "noMessages": "No messages yet",
+    "empty": "No chats yet",
+    "emptySubtitle": "Tap “Message the shop” on a product or shop page to start a conversation",
+    "writeToShop": "Message the shop",
+    "placeholder": "Write a message...",
+    "send": "Send",
+    "start": "Start a conversation with {{name}}",
+    "customer": "Customer"
   }
 }

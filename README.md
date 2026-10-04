@@ -14,6 +14,7 @@ and runs on Android, iOS and the web.
 - Favorites
 - Shop page, and an order management screen for shop owners
 - In-app notifications
+- Chat with shops (customers write to a shop from a product or shop page; shop owners answer in the same Chats tab)
 - Profile editing and three UI languages: Turkmen (default), Russian, English
 
 ## Requirements

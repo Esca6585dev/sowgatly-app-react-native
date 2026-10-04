@@ -17,6 +17,8 @@ import Account from '../components/Account'
 
 // Import your screens
 import NotificationsScreen from '../screens/NotificationsScreen'
+import ChatsScreen from '../screens/ChatsScreen'
+import ChatScreen from '../screens/ChatScreen'
 import ProductDetailScreen from '../screens/ProductDetailScreen'
 import CollectionScreen from '../screens/CollectionScreen'
 import CheckoutScreen from '../screens/CheckoutScreen'
@@ -55,6 +57,8 @@ const TabNavigator = () => {
             iconName = focused ? 'heart' : 'heart-outline'
           } else if (route.name === 'Account') {
             iconName = focused ? 'person' : 'person-outline'
+          } else if (route.name === 'Chat') {
+            iconName = focused ? 'chatbubbles' : 'chatbubbles-outline'
           } else if (route.name === 'Cart') {
             iconName = focused ? 'cart' : 'cart-outline'
           }
@@ -71,6 +75,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Main" component={Main} options={{ header: () => <Header /> }} />
       <Tab.Screen name="Favorite" component={Favorite} options={{ header: () => <Header /> }} />
+      <Tab.Screen name="Chat" component={ChatsScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Cart" component={Cart} options={{ header: () => <Header /> }} />
       <Tab.Screen name="Account" component={Account} options={{ headerShown: false }} />
     </Tab.Navigator>
@@ -113,6 +118,7 @@ const MainStack = () => {
     <Stack.Screen name="AddressForm" component={AddressFormScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false, animation: 'fade' }} />
     <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: t('notifications.title') }} />
+    <Stack.Screen name="ChatThread" component={ChatScreen} options={{ headerShown: false }} />
   </Stack.Navigator>
   )
 }

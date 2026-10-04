@@ -8,6 +8,8 @@ import { formatDateTime, STATUS_COLORS } from './OrdersScreen';
 import { colors, radius, spacing, typography } from '../theme';
 
 export const notificationText = (n, t) => {
+  // Newer backends send a localized body; older ones only the type + data.
+  if (n.body) return n.body;
   const id = n.data?.order_id;
   if (n.type === 'order_created') return t('notifications.orderCreated', { id });
   if (n.type === 'order_status') {
@@ -68,7 +70,10 @@ const NotificationsScreen = () => {
         return (
           <TouchableOpacity
             style={[styles.row, !item.read_at && styles.unread]}
-            onPress={() => item.data?.order_id && navigation.navigate('OrderDetail', { orderId: item.data.order_id })}
+            onPress={() => {
+              if (item.type === 'chat_message') navigation.navigate('HomeScreen', { screen: 'Chat' });
+              else if (item.data?.order_id) navigation.navigate('OrderDetail', { orderId: item.data.order_id });
+            }}
           >
             <View style={[styles.dot, { backgroundColor: STATUS_COLORS[status] || colors.accent }]} />
             <View style={styles.body}>

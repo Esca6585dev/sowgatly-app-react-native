@@ -8,6 +8,7 @@ import { API_URL, apiRequest } from '../config/api';
 import ProductCard from '../components/ProductCard';
 import { useFavorites } from '../context/FavoritesContext';
 import { imageUri, localize } from '../utils/localize';
+import { openChatWithShop } from '../utils/chat';
 import { colors, radius, spacing, typography } from '../theme';
 
 const GAP = spacing.md;
@@ -85,6 +86,10 @@ const ShopScreen = () => {
           <Text style={styles.meta}>{t('shop.weekend')}: {weekendHours}</Text>
         </View>
       ) : null}
+      <TouchableOpacity style={styles.chatButton} onPress={() => openChatWithShop(navigation, shopId).catch(() => {})}>
+        <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.textInverse} />
+        <Text style={styles.chatButtonText}>{t('chat.writeToShop')}</Text>
+      </TouchableOpacity>
       <Text style={styles.sectionTitle}>{t('shop.products')}</Text>
     </View>
   );
@@ -158,6 +163,17 @@ const styles = StyleSheet.create({
   shopName: { fontSize: typography.size.xl, fontWeight: typography.weight.bold, color: colors.text },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.xs },
   meta: { fontSize: typography.size.sm, color: colors.textMuted },
+  chatButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.full,
+    backgroundColor: colors.primary,
+  },
+  chatButtonText: { color: colors.textInverse, fontWeight: typography.weight.semibold, fontSize: typography.size.sm },
   sectionTitle: {
     alignSelf: 'flex-start',
     fontSize: typography.size.lg,

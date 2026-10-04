@@ -27,7 +27,8 @@
     "Main": "Esasy",
     "Favorite": "Halanan",
     "Cart": "Sebet",
-    "Account": "Hasap"
+    "Account": "Hasap",
+    "Chat": "Çat"
   },
   "welcome": {
     "subtitle": "Iň gowy sowgatlary saýlaň we öýüňize eltip beriň",
@@ -219,5 +220,17 @@
       "completed": "Tamamlandy",
       "cancelled": "Ýatyr"
     }
+  },
+  "chat": {
+    "title": "Çatlar",
+    "you": "Siz",
+    "noMessages": "Habar ýok",
+    "empty": "Çat ýok",
+    "emptySubtitle": "Haryt ýa-da dükan sahypasynda «Dükana ýaz» düwmesine basyp, dükan bilen habarlaşyň",
+    "writeToShop": "Dükana ýaz",
+    "placeholder": "Habar ýazyň...",
+    "send": "Iber",
+    "start": "{{name}} bilen söhbetdeşligi başlaň",
+    "customer": "Müşderi"
   }
 }
