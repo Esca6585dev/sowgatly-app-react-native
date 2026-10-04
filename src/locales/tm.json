@@ -26,7 +26,6 @@
   "tabs": {
     "Main": "Esasy",
     "Favorite": "Halanan",
-    "Chat": "Çat",
     "Cart": "Sebet",
     "Account": "Hasap"
   },
@@ -83,10 +82,6 @@
   "favorites": {
     "emptyTitle": "Halananlar boş",
     "emptySubtitle": "Önümleriň ýanyndaky ýürejige basyp, halan zatlaryňyzy şu ýere goşuň"
-  },
-  "chat": {
-    "emptyTitle": "Habarlaşma ýok",
-    "emptySubtitle": "Sargydyňyz baradaky habarlar şu ýerde görkeziler"
   },
   "cart": {
     "emptyTitle": "Sebediňiz boş",

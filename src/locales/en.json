@@ -26,7 +26,6 @@
   "tabs": {
     "Main": "Home",
     "Favorite": "Favorites",
-    "Chat": "Chat",
     "Cart": "Cart",
     "Account": "Account"
   },
@@ -83,10 +82,6 @@
   "favorites": {
     "emptyTitle": "No favorites yet",
     "emptySubtitle": "Tap the heart on a product to save it here"
-  },
-  "chat": {
-    "emptyTitle": "No messages",
-    "emptySubtitle": "Messages about your order will show up here"
   },
   "cart": {
     "emptyTitle": "Your cart is empty",

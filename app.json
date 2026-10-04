@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/img/logo/apple-icon-180x180.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/img/logo/logo-white.png",
       "resizeMode": "contain",
@@ -15,6 +16,7 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.sowgatly.app",
       "supportsTablet": true
     },
     "android": {
@@ -26,6 +28,7 @@
       }
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/img/logo/favicon-96x96.png"
     }
   }

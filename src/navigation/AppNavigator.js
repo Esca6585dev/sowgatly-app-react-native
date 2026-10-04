@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Ionicons } from '@expo/vector-icons'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { colors } from '../theme'
@@ -12,7 +12,6 @@ import { colors } from '../theme'
 import Header from '../components/Header'
 import Main from '../components/Main'
 import Favorite from '../components/Favorite'
-import Chat from '../components/Chat'
 import Cart from '../components/Cart'
 import Account from '../components/Account'
 
@@ -56,8 +55,6 @@ const TabNavigator = () => {
             iconName = focused ? 'heart' : 'heart-outline'
           } else if (route.name === 'Account') {
             iconName = focused ? 'person' : 'person-outline'
-          } else if (route.name === 'Chat') {
-            iconName = focused ? 'chatbox' : 'chatbox-outline'
           } else if (route.name === 'Cart') {
             iconName = focused ? 'cart' : 'cart-outline'
           }
@@ -74,7 +71,6 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Main" component={Main} options={{ header: () => <Header /> }} />
       <Tab.Screen name="Favorite" component={Favorite} options={{ header: () => <Header /> }} />
-      <Tab.Screen name="Chat" component={Chat} options={{ header: () => <Header /> }} />
       <Tab.Screen name="Cart" component={Cart} options={{ header: () => <Header /> }} />
       <Tab.Screen name="Account" component={Account} options={{ headerShown: false }} />
     </Tab.Navigator>
