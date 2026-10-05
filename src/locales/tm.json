@@ -26,9 +26,9 @@
   "tabs": {
     "Main": "Esasy",
     "Favorite": "Halanan",
-    "Chat": "Çat",
     "Cart": "Sebet",
-    "Account": "Hasap"
+    "Account": "Hasap",
+    "Chat": "Çat"
   },
   "welcome": {
     "subtitle": "Iň gowy sowgatlary saýlaň we öýüňize eltip beriň",
@@ -83,10 +83,6 @@
   "favorites": {
     "emptyTitle": "Halananlar boş",
     "emptySubtitle": "Önümleriň ýanyndaky ýürejige basyp, halan zatlaryňyzy şu ýere goşuň"
-  },
-  "chat": {
-    "emptyTitle": "Habarlaşma ýok",
-    "emptySubtitle": "Sargydyňyz baradaky habarlar şu ýerde görkeziler"
   },
   "cart": {
     "emptyTitle": "Sebediňiz boş",
@@ -224,5 +220,17 @@
       "completed": "Tamamlandy",
       "cancelled": "Ýatyr"
     }
+  },
+  "chat": {
+    "title": "Çatlar",
+    "you": "Siz",
+    "noMessages": "Habar ýok",
+    "empty": "Çat ýok",
+    "emptySubtitle": "Haryt ýa-da dükan sahypasynda «Dükana ýaz» düwmesine basyp, dükan bilen habarlaşyň",
+    "writeToShop": "Dükana ýaz",
+    "placeholder": "Habar ýazyň...",
+    "send": "Iber",
+    "start": "{{name}} bilen söhbetdeşligi başlaň",
+    "customer": "Müşderi"
   }
 }

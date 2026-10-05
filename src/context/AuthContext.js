@@ -1,3 +1,4 @@
+import { resetChatCache } from '../utils/chat';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TOKEN_KEY, USER_KEY, apiRequest, setUnauthorizedHandler } from '../config/api';
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    resetChatCache();
     try {
       await apiRequest('/logout', { method: 'POST' });
     } catch (e) {

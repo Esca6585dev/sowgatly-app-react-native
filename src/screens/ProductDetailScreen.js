@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { API_URL } from '../config/api'
 import { useFavorites } from '../context/FavoritesContext'
 import { localize, discountedPrice, imageUri } from '../utils/localize'
+import { openChatWithShop } from '../utils/chat'
 import { colors, radius, spacing, typography } from '../theme'
 
 const ProductDetailScreen = ({ route }) => {
@@ -103,6 +104,13 @@ const ProductDetailScreen = ({ route }) => {
                 <Text style={styles.shopName}>{data.shop.name}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+          ) : null}
+
+          {data.shop?.id ? (
+            <TouchableOpacity style={styles.chatLink} onPress={() => openChatWithShop(navigation, data.shop.id).catch(() => {})}>
+              <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.accent} />
+              <Text style={styles.chatLinkText}>{t('chat.writeToShop')}</Text>
             </TouchableOpacity>
           ) : null}
 
@@ -241,6 +249,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     marginRight: spacing.md,
   },
+  chatLink: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.sm },
+  chatLinkText: { color: colors.accent, fontWeight: typography.weight.semibold, fontSize: typography.size.sm },
   shopText: {
     flex: 1,
   },

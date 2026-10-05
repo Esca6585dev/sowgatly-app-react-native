@@ -26,9 +26,9 @@
   "tabs": {
     "Main": "Home",
     "Favorite": "Favorites",
-    "Chat": "Chat",
     "Cart": "Cart",
-    "Account": "Account"
+    "Account": "Account",
+    "Chat": "Chats"
   },
   "welcome": {
     "subtitle": "Pick the best gifts and get them delivered to the door",
@@ -83,10 +83,6 @@
   "favorites": {
     "emptyTitle": "No favorites yet",
     "emptySubtitle": "Tap the heart on a product to save it here"
-  },
-  "chat": {
-    "emptyTitle": "No messages",
-    "emptySubtitle": "Messages about your order will show up here"
   },
   "cart": {
     "emptyTitle": "Your cart is empty",
@@ -224,5 +220,17 @@
       "completed": "Mark completed",
       "cancelled": "Cancel"
     }
+  },
+  "chat": {
+    "title": "Chats",
+    "you": "You",
+    "noMessages": "No messages yet",
+    "empty": "No chats yet",
+    "emptySubtitle": "Tap “Message the shop” on a product or shop page to start a conversation",
+    "writeToShop": "Message the shop",
+    "placeholder": "Write a message...",
+    "send": "Send",
+    "start": "Start a conversation with {{name}}",
+    "customer": "Customer"
   }
 }
